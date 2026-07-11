@@ -1,4 +1,4 @@
-# 📦 UniBox: Universal Smart Inbox
+<img width="800" height="622" alt="image" src="https://github.com/user-attachments/assets/e450ef76-b56d-4804-a47e-c47392f7259a" /># 📦 UniBox: Universal Smart Inbox
 
 ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
@@ -7,11 +7,11 @@
 
 UniBox is a Universal Smart Inbox for Android designed to solve digital hoarding across fragmented apps. Instead of losing links, recipes, tweets, and screenshots across 10 different apps, share them all directly to UniBox via the native Android Share Sheet.
 
-<p align="center">
-  <img src="https://via.placeholder.com/800x400?text=UniBox+Smart+Inbox" width="100%" alt="UniBox Banner">
-</p>
+<img width="800" height="622" alt="image" src="https://github.com/user-attachments/assets/49e54754-4012-4a06-afb0-a504fe5ac1f5" />
 
 ## ✨ Key Features
+
+<img width="561" height="377" alt="Screenshot 2026-07-12 042112" src="https://github.com/user-attachments/assets/3e9ea921-da0e-4846-9dac-a0d77cf652c7" />
 
 - **Share Target Integration**: Seamlessly save links, text, and images from any app (Chrome, Twitter, Instagram, etc.) directly into UniBox via the Android OS Share Sheet.
 - **Smart Auto-Categorization**: Automatically tags incoming links using smart categorization rules (e.g., YouTube -> Video, Amazon -> Shopping, Recipes -> Food).
@@ -20,7 +20,11 @@ UniBox is a Universal Smart Inbox for Android designed to solve digital hoarding
 - **Lightning Fast Search**: Powered by a Room Database with an **FTS4 Inverted Index** for instant, zero-lag full-text search across thousands of items.
 - **Location Reminders (Geofencing)**: Attach a location to a saved item and get a push notification when you physically walk within 200m of it.
 
+<img width="590" height="616" alt="Screenshot 2026-07-12 042047" src="https://github.com/user-attachments/assets/f74d44d8-356e-40e3-abc4-b8d1b8ded53e" />
+
 ## 🛠️ Tech Stack & Architecture
+
+<img width="632" height="596" alt="Screenshot 2026-07-12 042105" src="https://github.com/user-attachments/assets/9eda0a22-f3b7-4210-811f-bfa0c3b94b16" />
 
 Built entirely with modern Android development standards and best practices:
 
@@ -34,11 +38,15 @@ Built entirely with modern Android development standards and best practices:
 - **Network / Scraping**: JSoup for robust HTML and OpenGraph parsing.
 - **Image Loading**: Coil for fast, modern image caching and loading.
 
+<img width="567" height="518" alt="Screenshot 2026-07-12 042054" src="https://github.com/user-attachments/assets/6b357888-6533-489d-853d-8b491f73ca21" />
+
 ### Architecture Overview
 
 1. **Presentation Layer**: Contains ViewModels and Compose UI. Subscribes to Flows from the Domain layer.
 2. **Domain Layer**: Contains the core business logic (Use Cases, Models, Repository Interfaces). Fully independent of Android frameworks.
 3. **Data Layer**: Implements Repository interfaces. Handles Room Database interactions, background WorkManager tasks, and external parsing (JSoup).
+
+<img width="547" height="515" alt="Screenshot 2026-07-12 042140" src="https://github.com/user-attachments/assets/ed96bf9c-1ba2-4993-9dca-1e095b48a667" />
 
 ## 🚀 Getting Started
 
@@ -74,20 +82,4 @@ To test how UniBox intercepts shared content:
 4. Select "Save to UniBox" from the Android Share Sheet.
 5. The link will be instantly categorized and saved!
 
-## 🤝 Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📝 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## 📫 Contact
-
-Project Link: [https://github.com/your-username/unibox](https://github.com/your-username/unibox)
+**Documentation in the form of an obsidian vault is available in the repository**
