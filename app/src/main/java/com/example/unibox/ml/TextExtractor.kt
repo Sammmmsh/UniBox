@@ -26,7 +26,7 @@ class TextExtractor @Inject constructor() {
     suspend fun extractFromUri(context: Context, imageUri: Uri): String? {
         return try {
             val image = InputImage.fromFilePath(context, imageUri)
-            val result = recognizer.process(image).await()
+            val result = recognizer.process(image). await()
             val text = result.text.trim()
             text.ifBlank { null }
         } catch (e: Exception) {

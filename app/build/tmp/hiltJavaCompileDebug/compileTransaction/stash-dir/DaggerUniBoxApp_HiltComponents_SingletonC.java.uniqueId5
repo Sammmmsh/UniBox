@@ -497,20 +497,20 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_example_unibox_presentation_share_ShareViewModel = "com.example.unibox.presentation.share.ShareViewModel";
+
       static String com_example_unibox_presentation_detail_DetailViewModel = "com.example.unibox.presentation.detail.DetailViewModel";
 
       static String com_example_unibox_presentation_main_MainViewModel = "com.example.unibox.presentation.main.MainViewModel";
 
-      static String com_example_unibox_presentation_share_ShareViewModel = "com.example.unibox.presentation.share.ShareViewModel";
+      @KeepFieldType
+      ShareViewModel com_example_unibox_presentation_share_ShareViewModel2;
 
       @KeepFieldType
       DetailViewModel com_example_unibox_presentation_detail_DetailViewModel2;
 
       @KeepFieldType
       MainViewModel com_example_unibox_presentation_main_MainViewModel2;
-
-      @KeepFieldType
-      ShareViewModel com_example_unibox_presentation_share_ShareViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -538,7 +538,7 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
           return (T) new DetailViewModel(viewModelCImpl.savedStateHandle, singletonCImpl.provideUniBoxRepositoryProvider.get(), singletonCImpl.geofenceManagerProvider.get());
 
           case 1: // com.example.unibox.presentation.main.MainViewModel 
-          return (T) new MainViewModel(viewModelCImpl.getItemsUseCase(), viewModelCImpl.searchItemsUseCase(), viewModelCImpl.saveItemUseCase(), viewModelCImpl.deleteItemUseCase());
+          return (T) new MainViewModel(viewModelCImpl.getItemsUseCase(), viewModelCImpl.searchItemsUseCase(), viewModelCImpl.saveItemUseCase(), viewModelCImpl.deleteItemUseCase(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           case 2: // com.example.unibox.presentation.share.ShareViewModel 
           return (T) new ShareViewModel(viewModelCImpl.saveItemUseCase(), singletonCImpl.textExtractorProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));

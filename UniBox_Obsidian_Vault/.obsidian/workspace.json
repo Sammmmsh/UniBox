@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "9e38b8a810613074",
+        "id": "75d8c955427e308c",
         "type": "tabs",
         "children": [
           {
-            "id": "c3e3e85f98e6537e",
+            "id": "f61e329d067a5329",
             "type": "leaf",
             "state": {
-              "type": "empty",
+              "type": "graph",
               "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -178,12 +178,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "bd406d1fde7e0d6a",
+  "active": "f61e329d067a5329",
   "lastOpenFiles": [
+    "Untitled.base",
     "Untitled",
     "Untitled 1.base",
     "Untitled.md",
-    "Untitled.base",
     "Machine Learning.md",
     "Untitled.canvas",
     "Home.md",

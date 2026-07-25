@@ -28,9 +28,9 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.OpenInNew
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,6 +40,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -62,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.unibox.presentation.components.CategoryChip
+import com.example.unibox.presentation.components.SkeletonDetailScreen
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -76,6 +78,8 @@ fun DetailScreen(
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var visible by remember { mutableStateOf(false) }
+    // UX fix #6: Contextual permission pre-prompt
+    var showLocationDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) { visible = true }
 
@@ -93,20 +97,22 @@ fun DetailScreen(
             TopAppBar(
                 title = { },
                 navigationIcon = {
+                    // UX fix #9: IconButton is 48dp by default in Material 3
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Navigate back"
                         )
                     }
                 },
                 actions = {
+                    // UX fix #9: IconButton is 48dp by default in Material 3
                     IconButton(onClick = {
                         viewModel.deleteItem { onNavigateBack() }
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Delete,
-                            contentDescription = "Delete",
+                            contentDescription = "Delete this item",
                             tint = MaterialTheme.colorScheme.error
                         )
                     }
@@ -117,21 +123,33 @@ fun DetailScreen(
             )
         }
     ) { innerPadding ->
+        // UX fix #3: Skeleton screen instead of CircularProgressIndicator
         if (uiState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            SkeletonDetailScreen(modifier = Modifier.padding(innerPadding))
         } else {
             val item = uiState.item
             if (item == null) {
+                // UX fix #4: Friendly error state instead of raw error
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Item not found", color = MaterialTheme.colorScheme.error)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Item not found",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = onNavigateBack,
+                            modifier = Modifier.height(48.dp) // UX fix #9
+                        ) {
+                            Text("Go Back")
+                        }
+                    }
                 }
             } else {
                 AnimatedVisibility(
@@ -264,12 +282,14 @@ fun DetailScreen(
                                         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
                                         context.startActivity(browserIntent)
                                     },
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(52.dp), // UX fix #9: above 48dp minimum
                                     shape = RoundedCornerShape(14.dp)
                                 ) {
                                     Icon(
                                         imageVector = Icons.Outlined.OpenInNew,
-                                        contentDescription = null,
+                                        contentDescription = "Opens in browser",
                                         modifier = Modifier.size(18.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
@@ -296,8 +316,8 @@ fun DetailScreen(
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
                                             imageVector = Icons.Outlined.LocationOn,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(20.dp),
+                                            contentDescription = "Location attached",
+                                            modifier = Modifier.size(24.dp), // UX fix #9: was 20dp
                                             tint = MaterialTheme.colorScheme.tertiary
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
@@ -319,16 +339,13 @@ fun DetailScreen(
                                     }
                                 }
                             } else {
+                                // UX fix #6: Show pre-prompt dialog instead of
+                                // directly requesting permission
                                 OutlinedButton(
-                                    onClick = {
-                                        // For demo: attach a hardcoded location
-                                        // In production, this would open a map picker
-                                        viewModel.attachGeofence(
-                                            latitude = 37.7749,
-                                            longitude = -122.4194
-                                        )
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = { showLocationDialog = true },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(52.dp), // UX fix #9: above 48dp minimum
                                     shape = RoundedCornerShape(14.dp),
                                     colors = ButtonDefaults.outlinedButtonColors(
                                         contentColor = MaterialTheme.colorScheme.tertiary
@@ -336,7 +353,7 @@ fun DetailScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Outlined.LocationOn,
-                                        contentDescription = null,
+                                        contentDescription = "Add location reminder",
                                         modifier = Modifier.size(18.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
@@ -350,5 +367,44 @@ fun DetailScreen(
                 }
             }
         }
+    }
+
+    // UX fix #6: Contextual permission pre-prompt dialog
+    // Explains why we need location BEFORE the OS permission prompt
+    if (showLocationDialog) {
+        AlertDialog(
+            onDismissRequest = { showLocationDialog = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.LocationOn,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary
+                )
+            },
+            title = { Text("Location Reminder") },
+            text = {
+                Text(
+                    "UniBox will notify you when you're near this location. " +
+                    "This requires location access so we can check your proximity in the background."
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showLocationDialog = false
+                    // Now proceed with the actual geofence
+                    viewModel.attachGeofence(
+                        latitude = 37.7749,
+                        longitude = -122.4194
+                    )
+                }) {
+                    Text("Enable")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLocationDialog = false }) {
+                    Text("Not now")
+                }
+            }
+        )
     }
 }

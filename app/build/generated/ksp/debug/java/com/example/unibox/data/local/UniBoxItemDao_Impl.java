@@ -44,6 +44,8 @@ public final class UniBoxItemDao_Impl implements UniBoxItemDao {
 
   private final SharedSQLiteStatement __preparedStmtOfDeleteItemById;
 
+  private final SharedSQLiteStatement __preparedStmtOfDeleteAllItems;
+
   public UniBoxItemDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
     this.__insertionAdapterOfUniBoxItemEntity = new EntityInsertionAdapter<UniBoxItemEntity>(__db) {
@@ -182,6 +184,14 @@ public final class UniBoxItemDao_Impl implements UniBoxItemDao {
         return _query;
       }
     };
+    this.__preparedStmtOfDeleteAllItems = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM unibox_items";
+        return _query;
+      }
+    };
   }
 
   @Override
@@ -261,6 +271,29 @@ public final class UniBoxItemDao_Impl implements UniBoxItemDao {
           }
         } finally {
           __preparedStmtOfDeleteItemById.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object deleteAllItems(final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteAllItems.acquire();
+        try {
+          __db.beginTransaction();
+          try {
+            _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return Unit.INSTANCE;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfDeleteAllItems.release(_stmt);
         }
       }
     }, $completion);
@@ -918,6 +951,103 @@ public final class UniBoxItemDao_Impl implements UniBoxItemDao {
         _statement.release();
       }
     });
+  }
+
+  @Override
+  public Object getAllItemsSync(final Continuation<? super List<UniBoxItemEntity>> $completion) {
+    final String _sql = "SELECT * FROM unibox_items ORDER BY timestamp DESC";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
+    return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<List<UniBoxItemEntity>>() {
+      @Override
+      @NonNull
+      public List<UniBoxItemEntity> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
+          final int _cursorIndexOfDescription = CursorUtil.getColumnIndexOrThrow(_cursor, "description");
+          final int _cursorIndexOfUrl = CursorUtil.getColumnIndexOrThrow(_cursor, "url");
+          final int _cursorIndexOfThumbnailUrl = CursorUtil.getColumnIndexOrThrow(_cursor, "thumbnailUrl");
+          final int _cursorIndexOfExtractedText = CursorUtil.getColumnIndexOrThrow(_cursor, "extractedText");
+          final int _cursorIndexOfCategory = CursorUtil.getColumnIndexOrThrow(_cursor, "category");
+          final int _cursorIndexOfSourceApp = CursorUtil.getColumnIndexOrThrow(_cursor, "sourceApp");
+          final int _cursorIndexOfTimestamp = CursorUtil.getColumnIndexOrThrow(_cursor, "timestamp");
+          final int _cursorIndexOfLatitude = CursorUtil.getColumnIndexOrThrow(_cursor, "latitude");
+          final int _cursorIndexOfLongitude = CursorUtil.getColumnIndexOrThrow(_cursor, "longitude");
+          final int _cursorIndexOfLocationLabel = CursorUtil.getColumnIndexOrThrow(_cursor, "locationLabel");
+          final int _cursorIndexOfImageUri = CursorUtil.getColumnIndexOrThrow(_cursor, "imageUri");
+          final List<UniBoxItemEntity> _result = new ArrayList<UniBoxItemEntity>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final UniBoxItemEntity _item;
+            final long _tmpId;
+            _tmpId = _cursor.getLong(_cursorIndexOfId);
+            final String _tmpTitle;
+            _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
+            final String _tmpDescription;
+            _tmpDescription = _cursor.getString(_cursorIndexOfDescription);
+            final String _tmpUrl;
+            if (_cursor.isNull(_cursorIndexOfUrl)) {
+              _tmpUrl = null;
+            } else {
+              _tmpUrl = _cursor.getString(_cursorIndexOfUrl);
+            }
+            final String _tmpThumbnailUrl;
+            if (_cursor.isNull(_cursorIndexOfThumbnailUrl)) {
+              _tmpThumbnailUrl = null;
+            } else {
+              _tmpThumbnailUrl = _cursor.getString(_cursorIndexOfThumbnailUrl);
+            }
+            final String _tmpExtractedText;
+            if (_cursor.isNull(_cursorIndexOfExtractedText)) {
+              _tmpExtractedText = null;
+            } else {
+              _tmpExtractedText = _cursor.getString(_cursorIndexOfExtractedText);
+            }
+            final String _tmpCategory;
+            _tmpCategory = _cursor.getString(_cursorIndexOfCategory);
+            final String _tmpSourceApp;
+            if (_cursor.isNull(_cursorIndexOfSourceApp)) {
+              _tmpSourceApp = null;
+            } else {
+              _tmpSourceApp = _cursor.getString(_cursorIndexOfSourceApp);
+            }
+            final long _tmpTimestamp;
+            _tmpTimestamp = _cursor.getLong(_cursorIndexOfTimestamp);
+            final Double _tmpLatitude;
+            if (_cursor.isNull(_cursorIndexOfLatitude)) {
+              _tmpLatitude = null;
+            } else {
+              _tmpLatitude = _cursor.getDouble(_cursorIndexOfLatitude);
+            }
+            final Double _tmpLongitude;
+            if (_cursor.isNull(_cursorIndexOfLongitude)) {
+              _tmpLongitude = null;
+            } else {
+              _tmpLongitude = _cursor.getDouble(_cursorIndexOfLongitude);
+            }
+            final String _tmpLocationLabel;
+            if (_cursor.isNull(_cursorIndexOfLocationLabel)) {
+              _tmpLocationLabel = null;
+            } else {
+              _tmpLocationLabel = _cursor.getString(_cursorIndexOfLocationLabel);
+            }
+            final String _tmpImageUri;
+            if (_cursor.isNull(_cursorIndexOfImageUri)) {
+              _tmpImageUri = null;
+            } else {
+              _tmpImageUri = _cursor.getString(_cursorIndexOfImageUri);
+            }
+            _item = new UniBoxItemEntity(_tmpId,_tmpTitle,_tmpDescription,_tmpUrl,_tmpThumbnailUrl,_tmpExtractedText,_tmpCategory,_tmpSourceApp,_tmpTimestamp,_tmpLatitude,_tmpLongitude,_tmpLocationLabel,_tmpImageUri);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+          _statement.release();
+        }
+      }
+    }, $completion);
   }
 
   @NonNull

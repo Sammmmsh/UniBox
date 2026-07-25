@@ -175,8 +175,8 @@ fun UniBoxCard(
                         if (item.latitude != null && item.longitude != null) {
                             Icon(
                                 imageVector = Icons.Outlined.LocationOn,
-                                contentDescription = "Has location",
-                                modifier = Modifier.size(14.dp),
+                                contentDescription = "Has location reminder",
+                                modifier = Modifier.size(16.dp),
                                 tint = MaterialTheme.colorScheme.tertiary
                             )
                             Spacer(modifier = Modifier.width(4.dp))
@@ -185,8 +185,8 @@ fun UniBoxCard(
                         if (item.url != null) {
                             Icon(
                                 imageVector = Icons.Outlined.OpenInNew,
-                                contentDescription = "Has link",
-                                modifier = Modifier.size(14.dp),
+                                contentDescription = "Has URL link",
+                                modifier = Modifier.size(16.dp),
                                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
                             )
                         }

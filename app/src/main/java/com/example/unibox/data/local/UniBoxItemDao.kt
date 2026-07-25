@@ -65,4 +65,12 @@ interface UniBoxItemDao {
 
     @Query("SELECT COUNT(*) FROM unibox_items")
     fun getItemCount(): Flow<Int>
+
+    // ── Bulk operations (Settings screen) ────────────────────────────
+
+    @Query("SELECT * FROM unibox_items ORDER BY timestamp DESC")
+    suspend fun getAllItemsSync(): List<UniBoxItemEntity>
+
+    @Query("DELETE FROM unibox_items")
+    suspend fun deleteAllItems()
 }

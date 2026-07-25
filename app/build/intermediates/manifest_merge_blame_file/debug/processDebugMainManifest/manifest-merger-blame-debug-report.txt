@@ -420,103 +420,112 @@
 226-->[com.google.android.gms:play-services-base:18.3.0] C:\Users\samsh\.gradle\caches\transforms-4\5101e33637f71109c41f799c64c2947c\transformed\play-services-base-18.3.0\AndroidManifest.xml:22:19-43
 227            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 227-->[com.google.android.gms:play-services-base:18.3.0] C:\Users\samsh\.gradle\caches\transforms-4\5101e33637f71109c41f799c64c2947c\transformed\play-services-base-18.3.0\AndroidManifest.xml:21:19-78
-228
-229        <meta-data
-229-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\samsh\.gradle\caches\transforms-4\8dca8cc67c971fb5151af89dfd947eb2\transformed\play-services-basement-18.3.0\AndroidManifest.xml:21:9-23:69
-230            android:name="com.google.android.gms.version"
-230-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\samsh\.gradle\caches\transforms-4\8dca8cc67c971fb5151af89dfd947eb2\transformed\play-services-basement-18.3.0\AndroidManifest.xml:22:13-58
-231            android:value="@integer/google_play_services_version" />
-231-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\samsh\.gradle\caches\transforms-4\8dca8cc67c971fb5151af89dfd947eb2\transformed\play-services-basement-18.3.0\AndroidManifest.xml:23:13-66
-232
-233        <activity
-233-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\5c2320a21c612bd53e36b64b1fd0c8c3\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
-234            android:name="androidx.compose.ui.tooling.PreviewActivity"
-234-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\5c2320a21c612bd53e36b64b1fd0c8c3\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
-235            android:exported="true" />
-235-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\5c2320a21c612bd53e36b64b1fd0c8c3\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
-236        <activity
-236-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\7ba267b6176295e8f3a8c1f2fdc58b0e\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:23:9-25:39
-237            android:name="androidx.activity.ComponentActivity"
-237-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\7ba267b6176295e8f3a8c1f2fdc58b0e\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:24:13-63
-238            android:exported="true" />
-238-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\7ba267b6176295e8f3a8c1f2fdc58b0e\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:25:13-36
+228        <activity
+228-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\5c2320a21c612bd53e36b64b1fd0c8c3\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
+229            android:name="androidx.compose.ui.tooling.PreviewActivity"
+229-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\5c2320a21c612bd53e36b64b1fd0c8c3\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
+230            android:exported="true" />
+230-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\5c2320a21c612bd53e36b64b1fd0c8c3\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
+231        <activity
+231-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\7ba267b6176295e8f3a8c1f2fdc58b0e\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:23:9-25:39
+232            android:name="androidx.activity.ComponentActivity"
+232-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\7ba267b6176295e8f3a8c1f2fdc58b0e\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:24:13-63
+233            android:exported="true" />
+233-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\samsh\.gradle\caches\transforms-4\7ba267b6176295e8f3a8c1f2fdc58b0e\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:25:13-36
+234
+235        <service
+235-->[androidx.room:room-runtime:2.6.1] C:\Users\samsh\.gradle\caches\transforms-4\1982ced04a82e1d48475c64fe5d4cb3a\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
+236            android:name="androidx.room.MultiInstanceInvalidationService"
+236-->[androidx.room:room-runtime:2.6.1] C:\Users\samsh\.gradle\caches\transforms-4\1982ced04a82e1d48475c64fe5d4cb3a\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
+237            android:directBootAware="true"
+237-->[androidx.room:room-runtime:2.6.1] C:\Users\samsh\.gradle\caches\transforms-4\1982ced04a82e1d48475c64fe5d4cb3a\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
+238            android:exported="false" />
+238-->[androidx.room:room-runtime:2.6.1] C:\Users\samsh\.gradle\caches\transforms-4\1982ced04a82e1d48475c64fe5d4cb3a\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
 239
-240        <service
-240-->[androidx.room:room-runtime:2.6.1] C:\Users\samsh\.gradle\caches\transforms-4\1982ced04a82e1d48475c64fe5d4cb3a\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
-241            android:name="androidx.room.MultiInstanceInvalidationService"
-241-->[androidx.room:room-runtime:2.6.1] C:\Users\samsh\.gradle\caches\transforms-4\1982ced04a82e1d48475c64fe5d4cb3a\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
-242            android:directBootAware="true"
-242-->[androidx.room:room-runtime:2.6.1] C:\Users\samsh\.gradle\caches\transforms-4\1982ced04a82e1d48475c64fe5d4cb3a\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
-243            android:exported="false" />
-243-->[androidx.room:room-runtime:2.6.1] C:\Users\samsh\.gradle\caches\transforms-4\1982ced04a82e1d48475c64fe5d4cb3a\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
-244
-245        <receiver
-245-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
-246            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-246-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
-247            android:directBootAware="false"
-247-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
-248            android:enabled="true"
-248-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
-249            android:exported="true"
-249-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
-250            android:permission="android.permission.DUMP" >
-250-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
-251            <intent-filter>
-251-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
-252                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-252-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
-252-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
-253            </intent-filter>
-254            <intent-filter>
-254-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
-255                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-255-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
-255-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
-256            </intent-filter>
-257            <intent-filter>
-257-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
-258                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-258-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
-258-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
-259            </intent-filter>
-260            <intent-filter>
-260-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
-261                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-261-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
-261-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
-262            </intent-filter>
-263        </receiver>
-264
-265        <service
-265-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:29:9-35:19
-266            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
-266-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:30:13-103
-267            android:exported="false" >
-267-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:31:13-37
-268            <meta-data
-268-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:32:13-34:39
-269                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
-269-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:33:17-94
-270                android:value="cct" />
-270-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:34:17-36
-271        </service>
-272        <service
-272-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:26:9-30:19
-273            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
-273-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:27:13-117
-274            android:exported="false"
-274-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:28:13-37
-275            android:permission="android.permission.BIND_JOB_SERVICE" >
-275-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:29:13-69
-276        </service>
-277
-278        <receiver
-278-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:32:9-34:40
-279            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
-279-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:33:13-132
-280            android:exported="false" />
-280-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:34:13-37
-281    </application>
-282
-283</manifest>
+240        <meta-data
+240-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\samsh\.gradle\caches\transforms-4\8dca8cc67c971fb5151af89dfd947eb2\transformed\play-services-basement-18.3.0\AndroidManifest.xml:21:9-23:69
+241            android:name="com.google.android.gms.version"
+241-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\samsh\.gradle\caches\transforms-4\8dca8cc67c971fb5151af89dfd947eb2\transformed\play-services-basement-18.3.0\AndroidManifest.xml:22:13-58
+242            android:value="@integer/google_play_services_version" />
+242-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\samsh\.gradle\caches\transforms-4\8dca8cc67c971fb5151af89dfd947eb2\transformed\play-services-basement-18.3.0\AndroidManifest.xml:23:13-66
+243
+244        <receiver
+244-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+245            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+245-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+246            android:directBootAware="false"
+246-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+247            android:enabled="true"
+247-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+248            android:exported="true"
+248-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+249            android:permission="android.permission.DUMP" >
+249-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+250            <intent-filter>
+250-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+251                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+251-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+251-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+252            </intent-filter>
+253            <intent-filter>
+253-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+254                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+254-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+254-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+255            </intent-filter>
+256            <intent-filter>
+256-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+257                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+257-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+257-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+258            </intent-filter>
+259            <intent-filter>
+259-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+260                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+260-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+260-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\samsh\.gradle\caches\transforms-4\f86202fa05dbc693059f291fbf250fc7\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+261            </intent-filter>
+262        </receiver>
+263
+264        <service
+264-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:29:9-35:19
+265            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+265-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:30:13-103
+266            android:exported="false" >
+266-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:31:13-37
+267            <meta-data
+267-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:32:13-34:39
+268                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+268-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:33:17-94
+269                android:value="cct" />
+269-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\samsh\.gradle\caches\transforms-4\0d4b478ad93bbe1cce125b4b4c23721b\transformed\transport-backend-cct-2.3.3\AndroidManifest.xml:34:17-36
+270        </service>
+271        <service
+271-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:26:9-30:19
+272            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+272-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:27:13-117
+273            android:exported="false"
+273-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:28:13-37
+274            android:permission="android.permission.BIND_JOB_SERVICE" >
+274-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:29:13-69
+275        </service>
+276
+277        <receiver
+277-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:32:9-34:40
+278            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+278-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:33:13-132
+279            android:exported="false" /> <!-- The activities will be merged into the manifest of the hosting app. -->
+279-->[com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\samsh\.gradle\caches\transforms-4\7b31ec40d9c42c86dd970fec6d285171\transformed\transport-runtime-2.2.6\AndroidManifest.xml:34:13-37
+280        <activity
+280-->[com.google.android.play:core-common:2.0.2] C:\Users\samsh\.gradle\caches\transforms-4\5b23dfd17ff065cf4949e7a6706eb5c6\transformed\core-common-2.0.2\AndroidManifest.xml:14:9-18:65
+281            android:name="com.google.android.play.core.common.PlayCoreDialogWrapperActivity"
+281-->[com.google.android.play:core-common:2.0.2] C:\Users\samsh\.gradle\caches\transforms-4\5b23dfd17ff065cf4949e7a6706eb5c6\transformed\core-common-2.0.2\AndroidManifest.xml:15:13-93
+282            android:exported="false"
+282-->[com.google.android.play:core-common:2.0.2] C:\Users\samsh\.gradle\caches\transforms-4\5b23dfd17ff065cf4949e7a6706eb5c6\transformed\core-common-2.0.2\AndroidManifest.xml:16:13-37
+283            android:stateNotNeeded="true"
+283-->[com.google.android.play:core-common:2.0.2] C:\Users\samsh\.gradle\caches\transforms-4\5b23dfd17ff065cf4949e7a6706eb5c6\transformed\core-common-2.0.2\AndroidManifest.xml:17:13-42
+284            android:theme="@style/Theme.PlayCore.Transparent" />
+284-->[com.google.android.play:core-common:2.0.2] C:\Users\samsh\.gradle\caches\transforms-4\5b23dfd17ff065cf4949e7a6706eb5c6\transformed\core-common-2.0.2\AndroidManifest.xml:18:13-62
+285    </application>
+286
+287</manifest>

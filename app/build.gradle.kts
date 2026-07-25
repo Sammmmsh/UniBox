@@ -111,6 +111,10 @@ dependencies {
     // Coil (Image loading for Compose)
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // Google Play In-App Review (UX fix #1: smart review prompts)
+    implementation("com.google.android.play:review:2.0.1")
+    implementation("com.google.android.play:review-ktx:2.0.1")
+
     // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

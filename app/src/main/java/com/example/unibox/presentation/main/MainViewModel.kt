@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.app.Activity
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.NetworkType
@@ -27,6 +28,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.example.unibox.data.workers.MetadataWorker
+import com.example.unibox.util.ConnectivityObserver
+import com.example.unibox.util.SmartReviewManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 /**
@@ -47,8 +50,18 @@ class MainViewModel @Inject constructor(
     private val searchItemsUseCase: SearchItemsUseCase,
     private val saveItemUseCase: SaveItemUseCase,
     private val deleteItemUseCase: DeleteItemUseCase,
-    @ApplicationContext private val appContext: Context
+    @ApplicationContext private val appContext: Context,
+    connectivityObserver: ConnectivityObserver,
+    private val smartReviewManager: SmartReviewManager
 ) : ViewModel() {
+
+    // UX fix #8: Real-time offline state
+    val isOnline: StateFlow<Boolean> = connectivityObserver.isOnline
+
+    init {
+        // UX fix #1: Track sessions for smart review timing
+        smartReviewManager.incrementSessionCount()
+    }
 
     private val _searchQuery = MutableStateFlow("")
     private val _selectedCategory = MutableStateFlow<Category?>(null)
@@ -120,6 +133,9 @@ class MainViewModel @Inject constructor(
             )
             
             val savedId = saveItemUseCase(item)
+
+            // UX fix #1: Track saves for smart review timing
+            smartReviewManager.incrementSaveCount()
             
             if (url != null) {
                 val workRequest = OneTimeWorkRequestBuilder<MetadataWorker>()
@@ -152,5 +168,15 @@ class MainViewModel @Inject constructor(
 
     private fun String.containsAny(vararg keywords: String): Boolean {
         return keywords.any { this.contains(it) }
+    }
+
+    /**
+     * UX fix #1: Request review only on a success moment,
+     * after enough saves and sessions.
+     */
+    fun requestReviewIfEligible(activity: Activity) {
+        if (smartReviewManager.shouldRequestReview()) {
+            smartReviewManager.requestReview(activity)
+        }
     }
 }

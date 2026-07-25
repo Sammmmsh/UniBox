@@ -5,6 +5,8 @@ import com.example.unibox.domain.usecase.DeleteItemUseCase;
 import com.example.unibox.domain.usecase.GetItemsUseCase;
 import com.example.unibox.domain.usecase.SaveItemUseCase;
 import com.example.unibox.domain.usecase.SearchItemsUseCase;
+import com.example.unibox.util.ConnectivityObserver;
+import com.example.unibox.util.SmartReviewManager;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
 import dagger.internal.QualifierMetadata;
@@ -37,32 +39,43 @@ public final class MainViewModel_Factory implements Factory<MainViewModel> {
 
   private final Provider<Context> appContextProvider;
 
+  private final Provider<ConnectivityObserver> connectivityObserverProvider;
+
+  private final Provider<SmartReviewManager> smartReviewManagerProvider;
+
   public MainViewModel_Factory(Provider<GetItemsUseCase> getItemsUseCaseProvider,
       Provider<SearchItemsUseCase> searchItemsUseCaseProvider,
       Provider<SaveItemUseCase> saveItemUseCaseProvider,
-      Provider<DeleteItemUseCase> deleteItemUseCaseProvider, Provider<Context> appContextProvider) {
+      Provider<DeleteItemUseCase> deleteItemUseCaseProvider, Provider<Context> appContextProvider,
+      Provider<ConnectivityObserver> connectivityObserverProvider,
+      Provider<SmartReviewManager> smartReviewManagerProvider) {
     this.getItemsUseCaseProvider = getItemsUseCaseProvider;
     this.searchItemsUseCaseProvider = searchItemsUseCaseProvider;
     this.saveItemUseCaseProvider = saveItemUseCaseProvider;
     this.deleteItemUseCaseProvider = deleteItemUseCaseProvider;
     this.appContextProvider = appContextProvider;
+    this.connectivityObserverProvider = connectivityObserverProvider;
+    this.smartReviewManagerProvider = smartReviewManagerProvider;
   }
 
   @Override
   public MainViewModel get() {
-    return newInstance(getItemsUseCaseProvider.get(), searchItemsUseCaseProvider.get(), saveItemUseCaseProvider.get(), deleteItemUseCaseProvider.get(), appContextProvider.get());
+    return newInstance(getItemsUseCaseProvider.get(), searchItemsUseCaseProvider.get(), saveItemUseCaseProvider.get(), deleteItemUseCaseProvider.get(), appContextProvider.get(), connectivityObserverProvider.get(), smartReviewManagerProvider.get());
   }
 
   public static MainViewModel_Factory create(Provider<GetItemsUseCase> getItemsUseCaseProvider,
       Provider<SearchItemsUseCase> searchItemsUseCaseProvider,
       Provider<SaveItemUseCase> saveItemUseCaseProvider,
-      Provider<DeleteItemUseCase> deleteItemUseCaseProvider, Provider<Context> appContextProvider) {
-    return new MainViewModel_Factory(getItemsUseCaseProvider, searchItemsUseCaseProvider, saveItemUseCaseProvider, deleteItemUseCaseProvider, appContextProvider);
+      Provider<DeleteItemUseCase> deleteItemUseCaseProvider, Provider<Context> appContextProvider,
+      Provider<ConnectivityObserver> connectivityObserverProvider,
+      Provider<SmartReviewManager> smartReviewManagerProvider) {
+    return new MainViewModel_Factory(getItemsUseCaseProvider, searchItemsUseCaseProvider, saveItemUseCaseProvider, deleteItemUseCaseProvider, appContextProvider, connectivityObserverProvider, smartReviewManagerProvider);
   }
 
   public static MainViewModel newInstance(GetItemsUseCase getItemsUseCase,
       SearchItemsUseCase searchItemsUseCase, SaveItemUseCase saveItemUseCase,
-      DeleteItemUseCase deleteItemUseCase, Context appContext) {
-    return new MainViewModel(getItemsUseCase, searchItemsUseCase, saveItemUseCase, deleteItemUseCase, appContext);
+      DeleteItemUseCase deleteItemUseCase, Context appContext,
+      ConnectivityObserver connectivityObserver, SmartReviewManager smartReviewManager) {
+    return new MainViewModel(getItemsUseCase, searchItemsUseCase, saveItemUseCase, deleteItemUseCase, appContext, connectivityObserver, smartReviewManager);
   }
 }

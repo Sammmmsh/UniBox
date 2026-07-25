@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.unibox.presentation.detail.DetailScreen
 import com.example.unibox.presentation.main.MainScreen
+import com.example.unibox.presentation.settings.SettingsScreen
 import com.example.unibox.presentation.theme.UniBoxTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,6 +47,9 @@ class MainActivity : ComponentActivity() {
                             MainScreen(
                                 onItemClick = { item ->
                                     navController.navigate("detail/${item.id}")
+                                },
+                                onSettingsClick = {
+                                    navController.navigate("settings")
                                 }
                             )
                         }
@@ -72,6 +76,30 @@ class MainActivity : ComponentActivity() {
                             }
                         ) {
                             DetailScreen(
+                                onNavigateBack = { navController.popBackStack() }
+                            )
+                        }
+
+                        // Settings screen (UX fix #10)
+                        composable(
+                            route = "settings",
+                            enterTransition = {
+                                slideIntoContainer(
+                                    AnimatedContentTransitionScope.SlideDirection.Start,
+                                    spring(
+                                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                                        stiffness = Spring.StiffnessLow
+                                    )
+                                )
+                            },
+                            exitTransition = {
+                                slideOutOfContainer(
+                                    AnimatedContentTransitionScope.SlideDirection.End,
+                                    spring(stiffness = Spring.StiffnessMedium)
+                                )
+                            }
+                        ) {
+                            SettingsScreen(
                                 onNavigateBack = { navController.popBackStack() }
                             )
                         }

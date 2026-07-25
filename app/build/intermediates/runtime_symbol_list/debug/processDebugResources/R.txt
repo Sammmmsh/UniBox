@@ -363,9 +363,10 @@ int style TextAppearance_Compat_Notification_Info 0x7f0d0004
 int style TextAppearance_Compat_Notification_Line2 0x7f0d0005
 int style TextAppearance_Compat_Notification_Time 0x7f0d0006
 int style TextAppearance_Compat_Notification_Title 0x7f0d0007
-int style Theme_UniBox 0x7f0d0008
-int style Widget_Compat_NotificationActionContainer 0x7f0d0009
-int style Widget_Compat_NotificationActionText 0x7f0d000a
+int style Theme_PlayCore_Transparent 0x7f0d0008
+int style Theme_UniBox 0x7f0d0009
+int style Widget_Compat_NotificationActionContainer 0x7f0d000a
+int style Widget_Compat_NotificationActionText 0x7f0d000b
 int[] styleable ActivityNavigator { 0x01010003, 0x7f030000, 0x7f030006, 0x7f030007, 0x7f03002a }
 int styleable ActivityNavigator_android_name 0
 int styleable ActivityNavigator_action 1

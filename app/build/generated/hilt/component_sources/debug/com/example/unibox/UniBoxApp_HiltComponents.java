@@ -5,6 +5,7 @@ import com.example.unibox.data.workers.MetadataWorker_HiltModule;
 import com.example.unibox.di.AppModule;
 import com.example.unibox.presentation.detail.DetailViewModel_HiltModules;
 import com.example.unibox.presentation.main.MainViewModel_HiltModules;
+import com.example.unibox.presentation.settings.SettingsViewModel_HiltModules;
 import com.example.unibox.presentation.share.ShareReceiverActivity_GeneratedInjector;
 import com.example.unibox.presentation.share.ShareViewModel_HiltModules;
 import dagger.Binds;
@@ -164,6 +165,7 @@ public final class UniBoxApp_HiltComponents {
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           MainViewModel_HiltModules.KeyModule.class,
+          SettingsViewModel_HiltModules.KeyModule.class,
           ShareViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class
@@ -206,6 +208,7 @@ public final class UniBoxApp_HiltComponents {
           DetailViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           MainViewModel_HiltModules.BindsModule.class,
+          SettingsViewModel_HiltModules.BindsModule.class,
           ShareViewModel_HiltModules.BindsModule.class
       }
   )

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 fun GlassSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
+    onSettingsClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     placeholder: String = "Search your inbox..."
 ) {
@@ -93,23 +95,35 @@ fun GlassSearchBar(
                 )
             }
 
-            // Clear button
+            // Clear button — UX fix #9: ensure minimum 48dp tap target
             AnimatedVisibility(
                 visible = query.isNotEmpty(),
                 enter = fadeIn() + slideInVertically { it / 2 },
                 exit = fadeOut()
             ) {
                 IconButton(
-                    onClick = { onQueryChange("") },
-                    modifier = Modifier.size(28.dp)
+                    onClick = { onQueryChange("") }
+                    // IconButton default is 48dp — no override needed
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
                         contentDescription = "Clear search",
-                        modifier = Modifier.size(18.dp),
+                        modifier = Modifier.size(20.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+            }
+
+            // Settings icon
+            IconButton(
+                onClick = onSettingsClick
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = "Open settings",
+                    modifier = Modifier.size(22.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

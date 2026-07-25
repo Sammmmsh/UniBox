@@ -31,9 +31,13 @@ import com.example.unibox.presentation.detail.DetailViewModel;
 import com.example.unibox.presentation.detail.DetailViewModel_HiltModules;
 import com.example.unibox.presentation.main.MainViewModel;
 import com.example.unibox.presentation.main.MainViewModel_HiltModules;
+import com.example.unibox.presentation.settings.SettingsViewModel;
+import com.example.unibox.presentation.settings.SettingsViewModel_HiltModules;
 import com.example.unibox.presentation.share.ShareReceiverActivity;
 import com.example.unibox.presentation.share.ShareViewModel;
 import com.example.unibox.presentation.share.ShareViewModel_HiltModules;
+import com.example.unibox.util.ConnectivityObserver;
+import com.example.unibox.util.SmartReviewManager;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -399,7 +403,7 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(3).put(LazyClassKeyProvider.com_example_unibox_presentation_detail_DetailViewModel, DetailViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_example_unibox_presentation_main_MainViewModel, MainViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_example_unibox_presentation_share_ShareViewModel, ShareViewModel_HiltModules.KeyModule.provide()).build());
+      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(4).put(LazyClassKeyProvider.com_example_unibox_presentation_detail_DetailViewModel, DetailViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_example_unibox_presentation_main_MainViewModel, MainViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_example_unibox_presentation_settings_SettingsViewModel, SettingsViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_example_unibox_presentation_share_ShareViewModel, ShareViewModel_HiltModules.KeyModule.provide()).build());
     }
 
     @Override
@@ -419,17 +423,22 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_example_unibox_presentation_detail_DetailViewModel = "com.example.unibox.presentation.detail.DetailViewModel";
-
       static String com_example_unibox_presentation_main_MainViewModel = "com.example.unibox.presentation.main.MainViewModel";
+
+      static String com_example_unibox_presentation_settings_SettingsViewModel = "com.example.unibox.presentation.settings.SettingsViewModel";
+
+      static String com_example_unibox_presentation_detail_DetailViewModel = "com.example.unibox.presentation.detail.DetailViewModel";
 
       static String com_example_unibox_presentation_share_ShareViewModel = "com.example.unibox.presentation.share.ShareViewModel";
 
       @KeepFieldType
-      DetailViewModel com_example_unibox_presentation_detail_DetailViewModel2;
+      MainViewModel com_example_unibox_presentation_main_MainViewModel2;
 
       @KeepFieldType
-      MainViewModel com_example_unibox_presentation_main_MainViewModel2;
+      SettingsViewModel com_example_unibox_presentation_settings_SettingsViewModel2;
+
+      @KeepFieldType
+      DetailViewModel com_example_unibox_presentation_detail_DetailViewModel2;
 
       @KeepFieldType
       ShareViewModel com_example_unibox_presentation_share_ShareViewModel2;
@@ -448,6 +457,8 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
     private Provider<DetailViewModel> detailViewModelProvider;
 
     private Provider<MainViewModel> mainViewModelProvider;
+
+    private Provider<SettingsViewModel> settingsViewModelProvider;
 
     private Provider<ShareViewModel> shareViewModelProvider;
 
@@ -482,12 +493,13 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
         final ViewModelLifecycle viewModelLifecycleParam) {
       this.detailViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
       this.mainViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
-      this.shareViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
+      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
+      this.shareViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(3).put(LazyClassKeyProvider.com_example_unibox_presentation_detail_DetailViewModel, ((Provider) detailViewModelProvider)).put(LazyClassKeyProvider.com_example_unibox_presentation_main_MainViewModel, ((Provider) mainViewModelProvider)).put(LazyClassKeyProvider.com_example_unibox_presentation_share_ShareViewModel, ((Provider) shareViewModelProvider)).build());
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(4).put(LazyClassKeyProvider.com_example_unibox_presentation_detail_DetailViewModel, ((Provider) detailViewModelProvider)).put(LazyClassKeyProvider.com_example_unibox_presentation_main_MainViewModel, ((Provider) mainViewModelProvider)).put(LazyClassKeyProvider.com_example_unibox_presentation_settings_SettingsViewModel, ((Provider) settingsViewModelProvider)).put(LazyClassKeyProvider.com_example_unibox_presentation_share_ShareViewModel, ((Provider) shareViewModelProvider)).build());
     }
 
     @Override
@@ -503,6 +515,8 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
 
       static String com_example_unibox_presentation_main_MainViewModel = "com.example.unibox.presentation.main.MainViewModel";
 
+      static String com_example_unibox_presentation_settings_SettingsViewModel = "com.example.unibox.presentation.settings.SettingsViewModel";
+
       @KeepFieldType
       ShareViewModel com_example_unibox_presentation_share_ShareViewModel2;
 
@@ -511,6 +525,9 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
 
       @KeepFieldType
       MainViewModel com_example_unibox_presentation_main_MainViewModel2;
+
+      @KeepFieldType
+      SettingsViewModel com_example_unibox_presentation_settings_SettingsViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -538,9 +555,12 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
           return (T) new DetailViewModel(viewModelCImpl.savedStateHandle, singletonCImpl.provideUniBoxRepositoryProvider.get(), singletonCImpl.geofenceManagerProvider.get());
 
           case 1: // com.example.unibox.presentation.main.MainViewModel 
-          return (T) new MainViewModel(viewModelCImpl.getItemsUseCase(), viewModelCImpl.searchItemsUseCase(), viewModelCImpl.saveItemUseCase(), viewModelCImpl.deleteItemUseCase(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+          return (T) new MainViewModel(viewModelCImpl.getItemsUseCase(), viewModelCImpl.searchItemsUseCase(), viewModelCImpl.saveItemUseCase(), viewModelCImpl.deleteItemUseCase(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.connectivityObserverProvider.get(), singletonCImpl.smartReviewManagerProvider.get());
 
-          case 2: // com.example.unibox.presentation.share.ShareViewModel 
+          case 2: // com.example.unibox.presentation.settings.SettingsViewModel 
+          return (T) new SettingsViewModel(singletonCImpl.provideUniBoxRepositoryProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 3: // com.example.unibox.presentation.share.ShareViewModel 
           return (T) new ShareViewModel(viewModelCImpl.saveItemUseCase(), singletonCImpl.textExtractorProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
@@ -635,6 +655,10 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
 
     private Provider<GeofenceManager> geofenceManagerProvider;
 
+    private Provider<ConnectivityObserver> connectivityObserverProvider;
+
+    private Provider<SmartReviewManager> smartReviewManagerProvider;
+
     private Provider<TextExtractor> textExtractorProvider;
 
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
@@ -660,7 +684,9 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
       this.metadataWorker_AssistedFactoryProvider = SingleCheck.provider(new SwitchingProvider<MetadataWorker_AssistedFactory>(singletonCImpl, 0));
       this.provideUniBoxRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<UniBoxRepository>(singletonCImpl, 4));
       this.geofenceManagerProvider = DoubleCheck.provider(new SwitchingProvider<GeofenceManager>(singletonCImpl, 5));
-      this.textExtractorProvider = DoubleCheck.provider(new SwitchingProvider<TextExtractor>(singletonCImpl, 6));
+      this.connectivityObserverProvider = DoubleCheck.provider(new SwitchingProvider<ConnectivityObserver>(singletonCImpl, 6));
+      this.smartReviewManagerProvider = DoubleCheck.provider(new SwitchingProvider<SmartReviewManager>(singletonCImpl, 7));
+      this.textExtractorProvider = DoubleCheck.provider(new SwitchingProvider<TextExtractor>(singletonCImpl, 8));
     }
 
     @Override
@@ -725,7 +751,13 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
           case 5: // com.example.unibox.location.GeofenceManager 
           return (T) new GeofenceManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 6: // com.example.unibox.ml.TextExtractor 
+          case 6: // com.example.unibox.util.ConnectivityObserver 
+          return (T) new ConnectivityObserver(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 7: // com.example.unibox.util.SmartReviewManager 
+          return (T) new SmartReviewManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 8: // com.example.unibox.ml.TextExtractor 
           return (T) new TextExtractor();
 
           default: throw new AssertionError(id);
