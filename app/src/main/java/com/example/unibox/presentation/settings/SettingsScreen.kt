@@ -127,6 +127,46 @@ fun SettingsScreen(
             HorizontalDivider()
             Spacer(modifier = Modifier.height(20.dp))
 
+            // Appearance section
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            val themeMode by viewModel.themeMode.collectAsState()
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf(
+                    com.example.unibox.domain.model.ThemeMode.SYSTEM to "System",
+                    com.example.unibox.domain.model.ThemeMode.LIGHT to "Light",
+                    com.example.unibox.domain.model.ThemeMode.DARK to "Dark"
+                ).forEach { (mode, label) ->
+                    androidx.compose.material3.FilterChip(
+                        selected = themeMode == mode,
+                        onClick = { viewModel.setThemeMode(mode) },
+                        label = { 
+                            Text(
+                                text = label,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            ) 
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(28.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(20.dp))
+
             // Data Management section
             Text(
                 text = "Data Management",

@@ -23,14 +23,32 @@ import com.example.unibox.presentation.main.MainScreen
 import com.example.unibox.presentation.settings.SettingsScreen
 import com.example.unibox.presentation.theme.UniBoxTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.foundation.isSystemInDarkTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var themePreferences: com.example.unibox.domain.repository.ThemePreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            UniBoxTheme {
+            val themeMode by themePreferences.themeMode.collectAsState(
+                initial = com.example.unibox.domain.model.ThemeMode.SYSTEM
+            )
+            
+            val isDarkTheme = when (themeMode) {
+                com.example.unibox.domain.model.ThemeMode.LIGHT -> false
+                com.example.unibox.domain.model.ThemeMode.DARK -> true
+                com.example.unibox.domain.model.ThemeMode.SYSTEM -> isSystemInDarkTheme()
+            }
+
+            UniBoxTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

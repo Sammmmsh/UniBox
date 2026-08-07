@@ -1,6 +1,7 @@
 package com.example.unibox.presentation.settings;
 
 import android.content.Context;
+import com.example.unibox.domain.repository.ThemePreferences;
 import com.example.unibox.domain.repository.UniBoxRepository;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -28,23 +29,27 @@ public final class SettingsViewModel_Factory implements Factory<SettingsViewMode
 
   private final Provider<Context> contextProvider;
 
+  private final Provider<ThemePreferences> themePreferencesProvider;
+
   public SettingsViewModel_Factory(Provider<UniBoxRepository> repositoryProvider,
-      Provider<Context> contextProvider) {
+      Provider<Context> contextProvider, Provider<ThemePreferences> themePreferencesProvider) {
     this.repositoryProvider = repositoryProvider;
     this.contextProvider = contextProvider;
+    this.themePreferencesProvider = themePreferencesProvider;
   }
 
   @Override
   public SettingsViewModel get() {
-    return newInstance(repositoryProvider.get(), contextProvider.get());
+    return newInstance(repositoryProvider.get(), contextProvider.get(), themePreferencesProvider.get());
   }
 
   public static SettingsViewModel_Factory create(Provider<UniBoxRepository> repositoryProvider,
-      Provider<Context> contextProvider) {
-    return new SettingsViewModel_Factory(repositoryProvider, contextProvider);
+      Provider<Context> contextProvider, Provider<ThemePreferences> themePreferencesProvider) {
+    return new SettingsViewModel_Factory(repositoryProvider, contextProvider, themePreferencesProvider);
   }
 
-  public static SettingsViewModel newInstance(UniBoxRepository repository, Context context) {
-    return new SettingsViewModel(repository, context);
+  public static SettingsViewModel newInstance(UniBoxRepository repository, Context context,
+      ThemePreferences themePreferences) {
+    return new SettingsViewModel(repository, context, themePreferences);
   }
 }

@@ -25,7 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val repository: UniBoxRepository,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val themePreferences: com.example.unibox.domain.repository.ThemePreferences
 ) : ViewModel() {
 
     private val _exportStatus = MutableStateFlow<String?>(null)
@@ -40,6 +41,19 @@ class SettingsViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = 0
         )
+
+    val themeMode: StateFlow<com.example.unibox.domain.model.ThemeMode> = themePreferences.themeMode
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = com.example.unibox.domain.model.ThemeMode.SYSTEM
+        )
+
+    fun setThemeMode(mode: com.example.unibox.domain.model.ThemeMode) {
+        viewModelScope.launch {
+            themePreferences.saveThemeMode(mode)
+        }
+    }
 
     fun exportData() {
         viewModelScope.launch {

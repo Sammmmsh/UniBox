@@ -38,4 +38,10 @@ object AppModule {
     fun provideUniBoxRepository(dao: UniBoxItemDao): UniBoxRepository {
         return UniBoxRepositoryImpl(dao)
     }
+
+    @Provides
+    @Singleton
+    fun provideThemePreferences(@ApplicationContext context: Context): com.example.unibox.domain.repository.ThemePreferences {
+        return com.example.unibox.data.repository.ThemePreferencesImpl(context)
+    }
 }
