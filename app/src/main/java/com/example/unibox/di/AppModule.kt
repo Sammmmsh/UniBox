@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.unibox.data.local.UniBoxDatabase
 import com.example.unibox.data.local.UniBoxItemDao
+import com.example.unibox.data.media.MediaStorage
 import com.example.unibox.data.repository.UniBoxRepositoryImpl
 import com.example.unibox.domain.repository.UniBoxRepository
 import dagger.Module
@@ -24,7 +25,9 @@ object AppModule {
             context,
             UniBoxDatabase::class.java,
             UniBoxDatabase.DATABASE_NAME
-        ).build()
+        )
+            .addMigrations(UniBoxDatabase.MIGRATION_1_2)
+            .build()
     }
 
     @Provides
@@ -35,8 +38,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUniBoxRepository(dao: UniBoxItemDao): UniBoxRepository {
-        return UniBoxRepositoryImpl(dao)
+    fun provideUniBoxRepository(
+        dao: UniBoxItemDao,
+        mediaStorage: MediaStorage
+    ): UniBoxRepository {
+        return UniBoxRepositoryImpl(dao, mediaStorage)
     }
 
     @Provides

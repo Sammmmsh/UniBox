@@ -10,6 +10,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.example.unibox.data.workers.MetadataWorker
+import com.example.unibox.data.media.MediaStorage
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.UniBoxItem
 import com.example.unibox.domain.usecase.SaveItemUseCase
@@ -23,28 +24,33 @@ import javax.inject.Inject
 class ShareViewModel @Inject constructor(
     private val saveItemUseCase: SaveItemUseCase,
     private val textExtractor: TextExtractor,
+    private val mediaStorage: MediaStorage,
     @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
     fun saveSharedContent(sharedData: SharedData, onComplete: () -> Unit) {
         viewModelScope.launch {
-            // If image shared, run ML Kit OCR first
-            var extractedText: String? = null
-            if (sharedData.imageUri != null) {
-                try {
-                    val uri = Uri.parse(sharedData.imageUri)
-                    extractedText = textExtractor.extractFromUri(appContext, uri)
-                } catch (_: Exception) { }
-            }
+            val localImageUris = mediaStorage.importImages(sharedData.imageUris)
+            val extractedText = localImageUris.mapNotNull { rawUri ->
+                runCatching {
+                    textExtractor.extractFromUri(appContext, Uri.parse(rawUri))
+                }.getOrNull()
+            }.filter(String::isNotBlank)
+                .joinToString(separator = "\n\n")
+                .ifBlank { null }
 
             val item = UniBoxItem(
                 title = sharedData.subject
                     ?: sharedData.url
                     ?: extractedText?.take(80)
-                    ?: sharedData.rawText.take(80).ifBlank { "Shared content" },
+                    ?: sharedData.rawText.take(80).ifBlank {
+                        if (localImageUris.size > 1) "${localImageUris.size} shared images"
+                        else "Shared content"
+                    },
                 description = if (sharedData.subject != null) sharedData.rawText else "",
                 url = sharedData.url,
-                imageUri = sharedData.imageUri,
+                imageUri = localImageUris.firstOrNull(),
+                imageUris = localImageUris,
                 extractedText = extractedText,
                 category = categorize(sharedData, extractedText),
                 sourceApp = sharedData.sourcePackage,
@@ -80,7 +86,7 @@ class ShareViewModel @Inject constructor(
         val text = "${data.rawText} ${data.url ?: ""} ${data.subject ?: ""} ${extractedText ?: ""}".lowercase()
 
         return when {
-            data.type == SharedDataType.IMAGE && data.url == null -> Category.BOOKMARK
+            data.type in setOf(SharedDataType.IMAGE, SharedDataType.MULTI_IMAGE) && data.url == null -> Category.BOOKMARK
             data.url != null -> categorizeUrl(data.url, text)
             else -> categorizeText(text)
         }

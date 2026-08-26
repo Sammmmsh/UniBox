@@ -1,8 +1,7 @@
 package com.example.unibox.presentation.share
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
@@ -76,10 +75,7 @@ fun ShareReceiverScreen(
             visible = visible,
             enter = fadeIn() + slideInVertically(
                 initialOffsetY = { -it / 4 },
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
+                animationSpec = tween(180)
             )
         ) {
             Row(
@@ -113,13 +109,10 @@ fun ShareReceiverScreen(
         AnimatedVisibility(
             visible = visible,
             enter = fadeIn(
-                animationSpec = spring(stiffness = Spring.StiffnessLow)
+                animationSpec = tween(160)
             ) + slideInVertically(
                 initialOffsetY = { it / 3 },
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
+                animationSpec = tween(200)
             )
         ) {
             Column {
@@ -158,6 +151,14 @@ fun ShareReceiverScreen(
                                     .clip(RoundedCornerShape(12.dp)),
                                 contentScale = ContentScale.Crop
                             )
+                            if (sharedData.imageUris.size > 1) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "${sharedData.imageUris.size} images selected",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                             Spacer(modifier = Modifier.height(12.dp))
                         }
 
@@ -226,11 +227,11 @@ fun ShareReceiverScreen(
                         text = when (sharedData.type) {
                             SharedDataType.TEXT ->
                                 if (sharedData.url != null)
-                                    "⚡ UniBox will fetch the page title, description, and thumbnail in the background."
+                                    "UniBox will fetch the page title, description, and thumbnail in the background."
                                 else
-                                    "📝 This text will be saved and made fully searchable."
+                                    "This text will be saved and made fully searchable."
                             SharedDataType.IMAGE, SharedDataType.MULTI_IMAGE ->
-                                "🔍 ML Kit will extract any text from this image for search."
+                                "Images are copied into UniBox and indexed with on-device text recognition."
                             SharedDataType.UNKNOWN ->
                                 "This content type isn't fully supported yet."
                         },

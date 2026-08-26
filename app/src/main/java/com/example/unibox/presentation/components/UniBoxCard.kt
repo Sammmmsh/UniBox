@@ -1,15 +1,9 @@
 package com.example.unibox.presentation.components
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,22 +12,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.OpenInNew
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,149 +36,90 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UniBoxCard(
     item: UniBoxItem,
-    onClick: (UniBoxItem) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (UniBoxItem) -> Unit = {}
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
             .clickable { onClick(item) },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp,
-            pressedElevation = 8.dp
-        )
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column {
-            // Thumbnail / Image section
-            if (item.thumbnailUrl != null || item.imageUri != null) {
-                Box(
+            val previewImage = item.thumbnailUrl ?: item.imageUris.firstOrNull() ?: item.imageUri
+            if (previewImage != null) {
+                AsyncImage(
+                    model = previewImage,
+                    contentDescription = item.title,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                ) {
-                    AsyncImage(
-                        model = item.thumbnailUrl ?: item.imageUri,
-                        contentDescription = item.title,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(16f / 10f),
-                        contentScale = ContentScale.Crop
-                    )
-                    // Gradient scrim at bottom of image
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .align(Alignment.BottomCenter)
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        Color.Black.copy(alpha = 0.3f)
-                                    )
-                                )
-                            )
-                    )
-                }
+                        .aspectRatio(16f / 9f),
+                    contentScale = ContentScale.Crop
+                )
             }
 
-            Column(
-                modifier = Modifier.padding(14.dp)
-            ) {
-                // Category chip
+            Column(modifier = Modifier.padding(16.dp)) {
                 CategoryChip(category = item.category)
+                Spacer(modifier = Modifier.height(10.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Title
                 Text(
                     text = item.title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
 
-                // Description
-                if (item.description.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                val supportingText = item.description.ifBlank {
+                    item.extractedText.orEmpty()
+                }
+                if (supportingText.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = item.description,
-                        style = MaterialTheme.typography.bodySmall,
+                        text = supportingText,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
 
-                // Extracted text preview
-                if (!item.extractedText.isNullOrBlank()) {
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = item.extractedText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
+                Spacer(modifier = Modifier.height(14.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Footer: timestamp, source, location indicator
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Timestamp
                     Text(
                         text = formatRelativeTime(item.timestamp),
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        // Location indicator
                         if (item.latitude != null && item.longitude != null) {
                             Icon(
                                 imageVector = Icons.Outlined.LocationOn,
-                                contentDescription = "Has location reminder",
+                                contentDescription = "Location reminder attached",
                                 modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.tertiary
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                         }
-                        // Link indicator
                         if (item.url != null) {
                             Icon(
-                                imageVector = Icons.Outlined.OpenInNew,
-                                contentDescription = "Has URL link",
+                                imageVector = Icons.AutoMirrored.Outlined.OpenInNew,
+                                contentDescription = "Link",
                                 modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -202,23 +134,17 @@ fun CategoryChip(
     category: Category,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
-            .background(category.color.copy(alpha = 0.12f))
-            .padding(horizontal = 10.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(6.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         Text(
-            text = category.emoji,
-            style = MaterialTheme.typography.labelSmall
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
             text = category.displayName,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.SemiBold,
-            color = category.color
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

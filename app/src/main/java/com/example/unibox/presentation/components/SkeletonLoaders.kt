@@ -68,8 +68,8 @@ fun shimmerBrush(): Brush {
  */
 @Composable
 fun SkeletonCard(
-    showImage: Boolean = true,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showImage: Boolean = true
 ) {
     val brush = shimmerBrush()
 
@@ -163,7 +163,7 @@ fun SkeletonCard(
 @Composable
 fun SkeletonGrid(modifier: Modifier = Modifier) {
     LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
+        columns = StaggeredGridCells.Adaptive(minSize = 280.dp),
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(
             start = 12.dp,

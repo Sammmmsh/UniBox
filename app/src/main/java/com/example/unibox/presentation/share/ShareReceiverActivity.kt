@@ -9,10 +9,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import com.example.unibox.domain.model.ThemeMode
+import com.example.unibox.domain.repository.ThemePreferences
 import com.example.unibox.presentation.theme.UniBoxTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 // Activity that handles incoming share intents from other apps.
 // Registered as a share target in AndroidManifest.xml for:
@@ -26,6 +32,9 @@ class ShareReceiverActivity : ComponentActivity() {
 
     private val shareViewModel: ShareViewModel by viewModels()
 
+    @Inject
+    lateinit var themePreferences: ThemePreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -33,7 +42,14 @@ class ShareReceiverActivity : ComponentActivity() {
         val sharedData = parseIncomingIntent(intent)
 
         setContent {
-            UniBoxTheme {
+            val themeMode by themePreferences.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
+            val darkTheme = when (themeMode) {
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+            }
+
+            UniBoxTheme(darkTheme = darkTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     ShareReceiverScreen(
                         sharedData = sharedData,
@@ -77,11 +93,10 @@ class ShareReceiverActivity : ComponentActivity() {
                         )
                     }
                     type.startsWith("image/") -> {
-                        @Suppress("DEPRECATION")
-                        val imageUri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+                        val imageUris = extractImageUris(intent)
                         SharedData(
                             type = SharedDataType.IMAGE,
-                            imageUri = imageUri?.toString(),
+                            imageUris = imageUris,
                             subject = intent.getStringExtra(Intent.EXTRA_SUBJECT),
                             sourcePackage = intent.`package`
                                 ?: callingPackage
@@ -97,12 +112,11 @@ class ShareReceiverActivity : ComponentActivity() {
             Intent.ACTION_SEND_MULTIPLE -> {
                 val type = intent.type ?: ""
                 if (type.startsWith("image/")) {
-                    @Suppress("DEPRECATION")
-                    val imageUris = intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
+                    val imageUris = extractImageUris(intent)
                     SharedData(
                         type = SharedDataType.MULTI_IMAGE,
-                        rawText = "${imageUris?.size ?: 0} images shared",
-                        imageUri = imageUris?.firstOrNull()?.toString(),
+                        rawText = "${imageUris.size} images shared",
+                        imageUris = imageUris,
                         sourcePackage = intent.`package`
                             ?: callingPackage
                             ?: "Unknown"
@@ -126,6 +140,25 @@ class ShareReceiverActivity : ComponentActivity() {
         )
         return urlPattern.find(text)?.value
     }
+
+    @Suppress("DEPRECATION")
+    private fun extractImageUris(intent: Intent): List<String> {
+        val streamUris = when (intent.action) {
+            Intent.ACTION_SEND_MULTIPLE -> {
+                intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM).orEmpty()
+            }
+            else -> listOfNotNull(intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM))
+        }
+
+        val clipUris = buildList {
+            val clipData = intent.clipData ?: return@buildList
+            for (index in 0 until clipData.itemCount) {
+                clipData.getItemAt(index).uri?.let(::add)
+            }
+        }
+
+        return (streamUris + clipUris).map(Uri::toString).distinct()
+    }
 }
 
 // Represents parsed data from a share intent.
@@ -134,10 +167,12 @@ data class SharedData(
     val type: SharedDataType = SharedDataType.UNKNOWN,
     val rawText: String = "",
     val url: String? = null,
-    val imageUri: String? = null,
+    val imageUris: List<String> = emptyList(),
     val subject: String? = null,
     val sourcePackage: String = "Unknown"
-)
+) {
+    val imageUri: String? get() = imageUris.firstOrNull()
+}
 
 enum class SharedDataType(val label: String) {
     TEXT("Text / Link"),

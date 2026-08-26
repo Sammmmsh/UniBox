@@ -67,7 +67,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_map)
-            .setContentTitle("📍 You're nearby!")
+            .setContentTitle("Location reminder")
             .setContentText("You saved \"$title\" near this location.")
             .setStyle(
                 NotificationCompat.BigTextStyle()

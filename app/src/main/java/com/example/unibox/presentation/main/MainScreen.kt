@@ -1,14 +1,10 @@
 package com.example.unibox.presentation.main
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,21 +16,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CloudOff
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Inbox
+import androidx.compose.material.icons.outlined.Inbox
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -51,17 +50,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.unibox.domain.model.UniBoxItem
 import com.example.unibox.presentation.components.CategoryFilterRow
-import com.example.unibox.presentation.components.GlassSearchBar
+import com.example.unibox.presentation.components.LibrarySearchBar
 import com.example.unibox.presentation.components.SkeletonGrid
 import com.example.unibox.presentation.components.UniBoxCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    modifier: Modifier = Modifier,
     onItemClick: (UniBoxItem) -> Unit = {},
     onSettingsClick: () -> Unit = {},
-    viewModel: MainViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isOnline by viewModel.isOnline.collectAsState()
@@ -72,124 +71,114 @@ fun MainScreen(
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 8.dp, top = 14.dp, bottom = 2.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Library",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        text = itemCountLabel(uiState.items.size),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                IconButton(onClick = onSettingsClick) {
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = "Settings",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
 
-            // UX fix #8: Offline banner
             AnimatedVisibility(
                 visible = !isOnline,
                 enter = expandVertically() + fadeIn(),
                 exit = shrinkVertically() + fadeOut()
             ) {
-                Row(
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.errorContainer)
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 20.dp, vertical = 6.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    color = MaterialTheme.colorScheme.tertiaryContainer
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.CloudOff,
-                        contentDescription = "No internet",
-                        modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "You're offline — showing cached items",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.CloudOff,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                        Text(
+                            text = "Offline — your saved library is still available",
+                            modifier = Modifier.padding(start = 8.dp),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                    }
                 }
             }
 
-            // Floating glass search bar with settings icon
-            GlassSearchBar(
+            LibrarySearchBar(
                 query = uiState.searchQuery,
-                onQueryChange = viewModel::onSearchQueryChanged,
-                onSettingsClick = onSettingsClick
+                onQueryChange = viewModel::onSearchQueryChanged
             )
 
-            // Category filter chips
             CategoryFilterRow(
                 selectedCategory = uiState.selectedCategory,
                 onCategorySelected = viewModel::onCategorySelected
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
-            // Item count
-            Text(
-                text = "${uiState.items.size} items",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 2.dp)
-            )
-
-            // Content — UX fix #3: Skeleton screens instead of spinner
-            if (uiState.isLoading) {
-                SkeletonGrid(
+            when {
+                uiState.isLoading -> SkeletonGrid(modifier = Modifier.weight(1f))
+                uiState.items.isEmpty() -> EmptyLibraryState(
+                    hasQuery = uiState.searchQuery.isNotBlank() || uiState.selectedCategory != null,
                     modifier = Modifier.weight(1f)
                 )
-            } else if (uiState.items.isEmpty()) {
-                EmptyInboxState(
-                    hasQuery = uiState.searchQuery.isNotBlank() || uiState.selectedCategory != null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                )
-            } else {
-                // Masonry / Staggered Grid
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
+                else -> LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Adaptive(minSize = 280.dp),
+                    modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(
-                        start = 12.dp,
-                        end = 12.dp,
-                        top = 8.dp,
-                        bottom = 88.dp
+                        start = 20.dp,
+                        end = 20.dp,
+                        top = 10.dp,
+                        bottom = 96.dp
                     ),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalItemSpacing = 10.dp
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalItemSpacing = 12.dp
                 ) {
-                    items(
-                        items = uiState.items,
-                        key = { it.id }
-                    ) { item ->
-                        AnimatedVisibility(
-                            visible = true,
-                            enter = fadeIn(
-                                animationSpec = spring(stiffness = Spring.StiffnessLow)
-                            ) + slideInVertically(
-                                initialOffsetY = { it / 3 },
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            )
-                        ) {
-                            UniBoxCard(
-                                item = item,
-                                onClick = { onItemClick(item) }
-                            )
-                        }
+                    items(items = uiState.items, key = { it.id }) { item ->
+                        UniBoxCard(item = item, onClick = { onItemClick(item) })
                     }
                 }
             }
         }
 
-        // FAB to manually add items — UX fix #9: 56dp default is above 48dp minimum
         FloatingActionButton(
             onClick = { showAddSheet = true },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp),
+                .padding(20.dp),
+            shape = RoundedCornerShape(16.dp),
             containerColor = MaterialTheme.colorScheme.primary
         ) {
             Icon(
-                imageVector = Icons.Rounded.Add,
-                contentDescription = "Add item manually",
+                imageVector = Icons.Outlined.Add,
+                contentDescription = "Add an item",
                 tint = MaterialTheme.colorScheme.onPrimary
             )
         }
@@ -203,22 +192,27 @@ fun MainScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp)
-                    .padding(bottom = 24.dp),
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 28.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = "Add to UniBox",
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(text = "Add to UniBox", style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = "Save a thought or paste a link. UniBox will index it locally.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
                 OutlinedTextField(
                     value = manualText,
                     onValueChange = { manualText = it },
-                    label = { Text("Paste a link or type a note") },
+                    label = { Text("Note or link") },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3,
-                    maxLines = 5
+                    maxLines = 6,
+                    shape = RoundedCornerShape(12.dp)
                 )
 
                 Button(
@@ -229,10 +223,11 @@ fun MainScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp), // UX fix #9: above 48dp minimum
-                    enabled = manualText.isNotBlank()
+                        .height(52.dp),
+                    enabled = manualText.isNotBlank(),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Save Item")
+                    Text("Save")
                 }
             }
         }
@@ -240,38 +235,44 @@ fun MainScreen(
 }
 
 @Composable
-private fun EmptyInboxState(
+private fun EmptyLibraryState(
     hasQuery: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(32.dp)
         ) {
             Icon(
-                imageVector = Icons.Rounded.Inbox,
+                imageVector = Icons.Outlined.Inbox,
                 contentDescription = null,
-                modifier = Modifier.size(64.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                modifier = Modifier.size(42.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = if (hasQuery) "No matching items" else "Your inbox is empty",
+                text = if (hasQuery) "Nothing found" else "Your library is empty",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = if (hasQuery) "Try a different search or category"
-                else "Tap + to add items, or share content from any app",
+                text = if (hasQuery) {
+                    "Try another search or remove the current filter."
+                } else {
+                    "Share a link, image, or note from any app to keep it here."
+                },
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
         }
     }
+}
+
+private fun itemCountLabel(count: Int): String = when (count) {
+    0 -> "Everything you save, in one place"
+    1 -> "1 saved item"
+    else -> "$count saved items"
 }

@@ -22,5 +22,6 @@ data class UniBoxItemEntity(
     val latitude: Double? = null,
     val longitude: Double? = null,
     val locationLabel: String? = null,
-    val imageUri: String? = null
+    val imageUri: String? = null,
+    val imageUrisJson: String = "[]"
 )

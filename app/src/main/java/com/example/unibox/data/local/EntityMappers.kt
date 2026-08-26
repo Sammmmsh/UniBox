@@ -2,6 +2,7 @@ package com.example.unibox.data.local
 
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.UniBoxItem
+import org.json.JSONArray
 
 // Mapping functions between Room entities and domain models.
 // Keeps the domain layer completely independent of Room annotations.
@@ -24,7 +25,8 @@ fun UniBoxItemEntity.toDomainModel(): UniBoxItem {
         latitude = latitude,
         longitude = longitude,
         locationLabel = locationLabel,
-        imageUri = imageUri
+        imageUri = imageUri,
+        imageUris = imageUrisJson.toUriList()
     )
 }
 
@@ -42,6 +44,18 @@ fun UniBoxItem.toEntity(): UniBoxItemEntity {
         latitude = latitude,
         longitude = longitude,
         locationLabel = locationLabel,
-        imageUri = imageUri
+        imageUri = imageUri,
+        imageUrisJson = imageUris.toJsonArray()
     )
 }
+
+private fun String.toUriList(): List<String> = runCatching {
+    val array = JSONArray(this)
+    buildList {
+        for (index in 0 until array.length()) {
+            array.optString(index).takeIf(String::isNotBlank)?.let(::add)
+        }
+    }
+}.getOrDefault(emptyList())
+
+private fun List<String>.toJsonArray(): String = JSONArray(this).toString()

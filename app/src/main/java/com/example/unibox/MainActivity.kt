@@ -5,8 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
@@ -59,8 +58,8 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(
                             route = "main",
-                            enterTransition = { fadeIn(spring(stiffness = Spring.StiffnessLow)) },
-                            exitTransition = { fadeOut(spring(stiffness = Spring.StiffnessMedium)) }
+                            enterTransition = { fadeIn(tween(180)) },
+                            exitTransition = { fadeOut(tween(140)) }
                         ) {
                             MainScreen(
                                 onItemClick = { item ->
@@ -80,16 +79,13 @@ class MainActivity : ComponentActivity() {
                             enterTransition = {
                                 slideIntoContainer(
                                     AnimatedContentTransitionScope.SlideDirection.Start,
-                                    spring(
-                                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                                        stiffness = Spring.StiffnessLow
-                                    )
+                                    tween(220)
                                 )
                             },
                             exitTransition = {
                                 slideOutOfContainer(
                                     AnimatedContentTransitionScope.SlideDirection.End,
-                                    spring(stiffness = Spring.StiffnessMedium)
+                                    tween(180)
                                 )
                             }
                         ) {
@@ -104,16 +100,13 @@ class MainActivity : ComponentActivity() {
                             enterTransition = {
                                 slideIntoContainer(
                                     AnimatedContentTransitionScope.SlideDirection.Start,
-                                    spring(
-                                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                                        stiffness = Spring.StiffnessLow
-                                    )
+                                    tween(220)
                                 )
                             },
                             exitTransition = {
                                 slideOutOfContainer(
                                     AnimatedContentTransitionScope.SlideDirection.End,
-                                    spring(stiffness = Spring.StiffnessMedium)
+                                    tween(180)
                                 )
                             }
                         ) {

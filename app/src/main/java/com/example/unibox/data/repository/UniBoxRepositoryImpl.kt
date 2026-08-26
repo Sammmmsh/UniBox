@@ -1,8 +1,10 @@
 package com.example.unibox.data.repository
 
 import com.example.unibox.data.local.UniBoxItemDao
+import com.example.unibox.data.local.UniBoxItemEntity
 import com.example.unibox.data.local.toDomainModel
 import com.example.unibox.data.local.toEntity
+import com.example.unibox.data.media.MediaStorage
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.UniBoxItem
 import com.example.unibox.domain.repository.UniBoxRepository
@@ -13,7 +15,8 @@ import javax.inject.Singleton
 
 @Singleton
 class UniBoxRepositoryImpl @Inject constructor(
-    private val dao: UniBoxItemDao
+    private val dao: UniBoxItemDao,
+    private val mediaStorage: MediaStorage
 ) : UniBoxRepository {
 
     override fun getAllItems(): Flow<List<UniBoxItem>> {
@@ -56,6 +59,9 @@ class UniBoxRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteItem(id: Long) {
+        dao.getItemByIdSync(id)?.toDomainModel()?.let { item ->
+            mediaStorage.deleteImages(item.imageUris + listOfNotNull(item.imageUri))
+        }
         dao.deleteItemById(id)
     }
 
@@ -68,6 +74,9 @@ class UniBoxRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteAllItems() {
+        dao.getAllItemsSync().map(UniBoxItemEntity::toDomainModel).forEach { item ->
+            mediaStorage.deleteImages(item.imageUris + listOfNotNull(item.imageUri))
+        }
         dao.deleteAllItems()
     }
 }
