@@ -40,17 +40,17 @@ abstract class UniBoxDatabase : RoomDatabase() {
                 db.execSQL("DROP TRIGGER IF EXISTS room_fts_content_sync_unibox_items_fts_AFTER_INSERT")
                 db.execSQL("DROP TABLE IF EXISTS unibox_items_fts")
                 db.execSQL(
-                    """CREATE VIRTUAL TABLE IF NOT EXISTS unibox_items_fts USING FTS4(
-                        title TEXT NOT NULL,
-                        description TEXT NOT NULL,
-                        extractedText TEXT,
-                        url TEXT,
-                        sourceApp TEXT,
-                        category TEXT NOT NULL,
-                        userNote TEXT NOT NULL,
-                        collectionName TEXT,
-                        tagsJson TEXT NOT NULL,
-                        content=unibox_items
+                    """CREATE VIRTUAL TABLE IF NOT EXISTS `unibox_items_fts` USING FTS4(
+                        `title` TEXT NOT NULL,
+                        `description` TEXT NOT NULL,
+                        `extractedText` TEXT,
+                        `url` TEXT,
+                        `sourceApp` TEXT,
+                        `category` TEXT NOT NULL,
+                        `userNote` TEXT NOT NULL,
+                        `collectionName` TEXT,
+                        `tagsJson` TEXT NOT NULL,
+                        content=`unibox_items`
                     )""".trimIndent()
                 )
                 db.execSQL(
