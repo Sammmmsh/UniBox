@@ -16,9 +16,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.unibox.domain.model.Category
+import com.example.unibox.domain.model.ItemStatus
 import com.example.unibox.domain.model.UniBoxItem
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,7 +45,9 @@ import java.util.Locale
 fun UniBoxCard(
     item: UniBoxItem,
     modifier: Modifier = Modifier,
-    onClick: (UniBoxItem) -> Unit = {}
+    onClick: (UniBoxItem) -> Unit = {},
+    onToggleFavorite: (UniBoxItem) -> Unit = {},
+    onMoveToLibrary: (UniBoxItem) -> Unit = {}
 ) {
     Card(
         modifier = modifier
@@ -105,6 +112,19 @@ fun UniBoxCard(
                     )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (item.status == ItemStatus.INBOX) {
+                            IconButton(
+                                onClick = { onMoveToLibrary(item) },
+                                modifier = Modifier.size(40.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Done,
+                                    contentDescription = "Save to library",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
                         if (item.latitude != null && item.longitude != null) {
                             Icon(
                                 imageVector = Icons.Outlined.LocationOn,
@@ -120,6 +140,29 @@ fun UniBoxCard(
                                 contentDescription = "Link",
                                 modifier = Modifier.size(16.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        IconButton(
+                            onClick = { onToggleFavorite(item) },
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (item.isFavorite) {
+                                    Icons.Outlined.Star
+                                } else {
+                                    Icons.Outlined.StarBorder
+                                },
+                                contentDescription = if (item.isFavorite) {
+                                    "Remove from favorites"
+                                } else {
+                                    "Add to favorites"
+                                },
+                                modifier = Modifier.size(18.dp),
+                                tint = if (item.isFavorite) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                }
                             )
                         }
                     }

@@ -26,7 +26,10 @@ object AppModule {
             UniBoxDatabase::class.java,
             UniBoxDatabase.DATABASE_NAME
         )
-            .addMigrations(UniBoxDatabase.MIGRATION_1_2)
+            .addMigrations(
+                UniBoxDatabase.MIGRATION_1_2,
+                UniBoxDatabase.MIGRATION_2_3
+            )
             .build()
     }
 

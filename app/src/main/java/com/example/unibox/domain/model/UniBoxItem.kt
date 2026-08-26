@@ -18,8 +18,21 @@ data class UniBoxItem(
     val longitude: Double? = null,
     val locationLabel: String? = null,
     val imageUri: String? = null,
-    val imageUris: List<String> = emptyList()
+    val imageUris: List<String> = emptyList(),
+    val status: ItemStatus = ItemStatus.INBOX,
+    val isFavorite: Boolean = false,
+    val snoozedUntil: Long? = null,
+    val userNote: String = "",
+    val collectionName: String? = null,
+    val tags: List<String> = emptyList(),
+    val updatedAt: Long = System.currentTimeMillis()
 )
+
+enum class ItemStatus {
+    INBOX,
+    SAVED,
+    ARCHIVED
+}
 
 /**
  * Content categories for auto-tagging saved items.

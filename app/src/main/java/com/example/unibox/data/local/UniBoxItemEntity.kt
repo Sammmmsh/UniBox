@@ -23,5 +23,12 @@ data class UniBoxItemEntity(
     val longitude: Double? = null,
     val locationLabel: String? = null,
     val imageUri: String? = null,
-    val imageUrisJson: String = "[]"
+    val imageUrisJson: String = "[]",
+    val status: String = "INBOX",
+    val isFavorite: Boolean = false,
+    val snoozedUntil: Long? = null,
+    val userNote: String = "",
+    val collectionName: String? = null,
+    val tagsJson: String = "[]",
+    val updatedAt: Long = System.currentTimeMillis()
 )

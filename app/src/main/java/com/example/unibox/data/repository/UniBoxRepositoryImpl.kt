@@ -69,6 +69,10 @@ class UniBoxRepositoryImpl @Inject constructor(
         return dao.getItemCount()
     }
 
+    override fun getCollectionNames(): Flow<List<String>> {
+        return dao.getCollectionNames()
+    }
+
     override suspend fun getAllItemsSync(): List<UniBoxItem> {
         return dao.getAllItemsSync().map { it.toDomainModel() }
     }

@@ -48,3 +48,11 @@ class DeleteItemUseCase @Inject constructor(
         repository.deleteItem(id)
     }
 }
+
+class UpdateItemUseCase @Inject constructor(
+    private val repository: UniBoxRepository
+) {
+    suspend operator fun invoke(item: UniBoxItem) {
+        repository.updateItem(item.copy(updatedAt = System.currentTimeMillis()))
+    }
+}

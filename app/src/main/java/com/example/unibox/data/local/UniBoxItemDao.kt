@@ -66,6 +66,13 @@ interface UniBoxItemDao {
     @Query("SELECT COUNT(*) FROM unibox_items")
     fun getItemCount(): Flow<Int>
 
+    @Query("""
+        SELECT DISTINCT collectionName FROM unibox_items
+        WHERE collectionName IS NOT NULL AND TRIM(collectionName) != ''
+        ORDER BY collectionName COLLATE NOCASE
+    """)
+    fun getCollectionNames(): Flow<List<String>>
+
     // ── Bulk operations (Settings screen) ────────────────────────────
 
     @Query("SELECT * FROM unibox_items ORDER BY timestamp DESC")

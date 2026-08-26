@@ -77,6 +77,13 @@ class SettingsViewModel @Inject constructor(
                         put("locationLabel", item.locationLabel ?: JSONObject.NULL)
                         put("imageUri", item.imageUri ?: JSONObject.NULL)
                         put("imageUris", JSONArray(item.imageUris))
+                        put("status", item.status.name)
+                        put("isFavorite", item.isFavorite)
+                        put("snoozedUntil", item.snoozedUntil ?: JSONObject.NULL)
+                        put("userNote", item.userNote)
+                        put("collectionName", item.collectionName ?: JSONObject.NULL)
+                        put("tags", JSONArray(item.tags))
+                        put("updatedAt", item.updatedAt)
                     }
                     jsonArray.put(obj)
                 }

@@ -1,6 +1,7 @@
 package com.example.unibox.data.local
 
 import com.example.unibox.domain.model.Category
+import com.example.unibox.domain.model.ItemStatus
 import com.example.unibox.domain.model.UniBoxItem
 import org.json.JSONArray
 
@@ -26,7 +27,14 @@ fun UniBoxItemEntity.toDomainModel(): UniBoxItem {
         longitude = longitude,
         locationLabel = locationLabel,
         imageUri = imageUri,
-        imageUris = imageUrisJson.toUriList()
+        imageUris = imageUrisJson.toStringList(),
+        status = runCatching { ItemStatus.valueOf(status) }.getOrDefault(ItemStatus.INBOX),
+        isFavorite = isFavorite,
+        snoozedUntil = snoozedUntil,
+        userNote = userNote,
+        collectionName = collectionName,
+        tags = tagsJson.toStringList(),
+        updatedAt = updatedAt
     )
 }
 
@@ -45,11 +53,18 @@ fun UniBoxItem.toEntity(): UniBoxItemEntity {
         longitude = longitude,
         locationLabel = locationLabel,
         imageUri = imageUri,
-        imageUrisJson = imageUris.toJsonArray()
+        imageUrisJson = imageUris.toJsonArray(),
+        status = status.name,
+        isFavorite = isFavorite,
+        snoozedUntil = snoozedUntil,
+        userNote = userNote,
+        collectionName = collectionName,
+        tagsJson = tags.toJsonArray(),
+        updatedAt = updatedAt
     )
 }
 
-private fun String.toUriList(): List<String> = runCatching {
+private fun String.toStringList(): List<String> = runCatching {
     val array = JSONArray(this)
     buildList {
         for (index in 0 until array.length()) {

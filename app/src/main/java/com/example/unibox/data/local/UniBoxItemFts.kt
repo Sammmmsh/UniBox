@@ -19,5 +19,8 @@ data class UniBoxItemFts(
     val extractedText: String?,
     val url: String?,
     val sourceApp: String?,
-    val category: String
+    val category: String,
+    val userNote: String,
+    val collectionName: String?,
+    val tagsJson: String
 )

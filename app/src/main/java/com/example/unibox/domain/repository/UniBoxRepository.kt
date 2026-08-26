@@ -26,6 +26,8 @@ interface UniBoxRepository {
 
     fun getItemCount(): Flow<Int>
 
+    fun getCollectionNames(): Flow<List<String>>
+
     suspend fun getAllItemsSync(): List<UniBoxItem>
 
     suspend fun deleteAllItems()
