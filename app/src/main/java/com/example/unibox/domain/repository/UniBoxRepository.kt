@@ -23,6 +23,10 @@ interface UniBoxRepository {
 
     suspend fun updateItem(item: UniBoxItem)
 
+    suspend fun setFavorite(id: Long, favorite: Boolean): Boolean
+
+    suspend fun saveToLibrary(id: Long): Boolean
+
     suspend fun applyOrganizationSuggestions(
         expectedItem: UniBoxItem,
         selection: OrganizationSelection

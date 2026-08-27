@@ -2,10 +2,50 @@ package com.example.unibox.presentation.main
 
 import com.example.unibox.domain.model.ItemStatus
 import com.example.unibox.domain.model.UniBoxItem
+import com.example.unibox.domain.model.Category
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class LibraryWorkflowTest {
+
+    @Test
+    fun collectionCountsOnlyIncludeTheCurrentSection() {
+        val items = listOf(
+            item(1, "One", ItemStatus.SAVED, collection = "Work"),
+            item(2, "Two", ItemStatus.SAVED, collection = "Work"),
+            item(3, "Three", ItemStatus.INBOX, collection = "Work"),
+            item(4, "Four", ItemStatus.ARCHIVED, collection = "Other")
+        )
+        assertEquals(listOf(CollectionSummary("Work", 2)), items.inSection(LibrarySection.LIBRARY).collectionSummaries())
+    }
+
+    @Test
+    fun emptyCollectionNamesAreNotShownAndNamesSortConsistently() {
+        val items = listOf(
+            item(1, "One", ItemStatus.SAVED, collection = "Zoo"),
+            item(2, "Two", ItemStatus.SAVED, collection = ""),
+            item(3, "Three", ItemStatus.SAVED, collection = "alpha"),
+            item(4, "Four", ItemStatus.SAVED, collection = " ")
+        )
+        assertEquals(listOf("alpha", "Zoo"), items.collectionSummaries().map { it.name })
+    }
+
+    @Test
+    fun categoriesAreRelevantButAnActiveEmptyFilterRemainsRemovable() {
+        val items = listOf(UniBoxItem(title = "One", category = Category.TECH))
+        assertEquals(listOf(Category.TECH, Category.TRAVEL), items.availableCategories(Category.TRAVEL))
+    }
+
+    @Test
+    fun activeFiltersIncludeCategoryAndSearchCanAlwaysBeCleared() {
+        assertEquals(1, MainUiState(selectedCategory = Category.TECH).activeFilterCount)
+        assertTrue(MainUiState(searchQuery = "Nothing").hasActiveFilters)
+        assertEquals(4, MainUiState(
+            selectedCategory = Category.TECH, favoriteOnly = true,
+            selectedCollection = "Work", sortOrder = ItemSortOrder.TITLE
+        ).activeFilterCount)
+    }
 
     @Test
     fun inbox_excludesProcessedArchivedAndFutureSnoozedItems() {

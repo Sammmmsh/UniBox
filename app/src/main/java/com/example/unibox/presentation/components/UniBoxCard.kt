@@ -54,7 +54,7 @@ fun UniBoxCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick(item) },
+            .clickable(onClickLabel = "Open " + item.title) { onClick(item) },
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
@@ -65,7 +65,7 @@ fun UniBoxCard(
             if (previewImage != null) {
                 AsyncImage(
                     model = previewImage,
-                    contentDescription = item.title,
+                    contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(16f / 9f),
@@ -74,7 +74,15 @@ fun UniBoxCard(
             }
 
             Column(modifier = Modifier.padding(16.dp)) {
-                CategoryChip(category = item.category)
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    CategoryChip(category = item.category)
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        formatRelativeTime(item.timestamp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
@@ -95,7 +103,7 @@ fun UniBoxCard(
                         text = supportingText,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 3,
+                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
@@ -109,7 +117,18 @@ fun UniBoxCard(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                if (item.tags.isNotEmpty()) {
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        item.tags.take(2).joinToString("  ·  ") +
+                            if (item.tags.size > 2) "  +" + (item.tags.size - 2) else "",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Spacer(modifier = Modifier.height(6.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -117,16 +136,19 @@ fun UniBoxCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = formatRelativeTime(item.timestamp),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = item.collectionName.orEmpty(),
+                        modifier = Modifier.weight(1f).padding(end = 8.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (item.status == ItemStatus.INBOX) {
                             IconButton(
                                 onClick = { onMoveToLibrary(item) },
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(48.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Outlined.Done,
@@ -155,7 +177,7 @@ fun UniBoxCard(
                         }
                         IconButton(
                             onClick = { onToggleFavorite(item) },
-                            modifier = Modifier.size(40.dp)
+                            modifier = Modifier.size(48.dp)
                         ) {
                             Icon(
                                 imageVector = if (item.isFavorite) {

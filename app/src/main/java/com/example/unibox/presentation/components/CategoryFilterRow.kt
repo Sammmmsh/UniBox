@@ -19,12 +19,13 @@ import com.example.unibox.domain.model.Category
 fun CategoryFilterRow(
     selectedCategory: Category?,
     onCategorySelected: (Category?) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    categories: List<Category> = Category.entries
 ) {
     Row(
         modifier = modifier
             .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 2.dp),
+            .padding(vertical = 2.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         CategoryFilterChip(
@@ -33,7 +34,7 @@ fun CategoryFilterRow(
             onClick = { onCategorySelected(null) }
         )
 
-        Category.entries.forEach { category ->
+        categories.forEach { category ->
             CategoryFilterChip(
                 label = category.displayName,
                 selected = selectedCategory == category,

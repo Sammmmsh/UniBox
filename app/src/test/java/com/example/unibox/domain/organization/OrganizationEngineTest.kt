@@ -99,4 +99,14 @@ class OrganizationEngineTest {
     }
 
     private fun link(url: String) = UniBoxItem(title = url, url = url)
+
+    @Test
+    fun demoAndNoteBoilerplateDoNotSuggestAnUnrelatedCollection() {
+        val current = UniBoxItem(id = 1, title = "Sunday kitchen", description = "Demo note. Lemon herbs and vegetables.")
+        val reference = UniBoxItem(
+            id = 2, title = "Kotlin navigation", description = "Demo note. Android layouts.",
+            collectionName = "Build with Compose"
+        )
+        assertNull(engine.suggest(current, listOf(reference)).collection)
+    }
 }

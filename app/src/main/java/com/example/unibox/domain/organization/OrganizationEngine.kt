@@ -114,7 +114,8 @@ class OrganizationEngine @Inject constructor() {
             "how", "why", "what", "when", "where", "into", "about", "have", "has", "not", "all",
             "our", "their", "its", "can", "will", "use", "using", "new", "best", "more", "some",
             "guide", "tips", "learn", "introduction", "getting", "started", "saved", "article",
-            "video", "untitled", "shared", "content", "com", "www", "https", "http"
+            "video", "untitled", "shared", "content", "com", "www", "https", "http",
+            "demo", "sample", "example", "note", "notes", "reference", "notebook"
         )
         val PLATFORM_CATEGORIES = linkedMapOf(
             "youtube.com" to Category.VIDEO, "youtu.be" to Category.VIDEO,

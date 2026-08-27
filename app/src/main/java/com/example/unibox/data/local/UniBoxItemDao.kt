@@ -55,6 +55,15 @@ interface UniBoxItemDao {
     @Update
     suspend fun updateItem(item: UniBoxItemEntity)
 
+    @Query("UPDATE unibox_items SET isFavorite = :favorite, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun setFavorite(id: Long, favorite: Boolean, updatedAt: Long): Int
+
+    @Query("""
+        UPDATE unibox_items SET status = 'SAVED', snoozedUntil = NULL, updatedAt = :updatedAt
+        WHERE id = :id AND status = 'INBOX'
+    """)
+    suspend fun saveToLibrary(id: Long, updatedAt: Long): Int
+
     // Only update organization fields, and reject stale suggestions after another edit.
     @Query("""
         UPDATE unibox_items SET category = COALESCE(:category, category),
