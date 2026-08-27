@@ -6,6 +6,9 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,10 +28,12 @@ class TextExtractor @Inject constructor() {
      */
     suspend fun extractFromUri(context: Context, imageUri: Uri): String? {
         return try {
-            val image = InputImage.fromFilePath(context, imageUri)
-            val result = recognizer.process(image). await()
+            val image = withContext(Dispatchers.IO) { InputImage.fromFilePath(context, imageUri) }
+            val result = recognizer.process(image).await()
             val text = result.text.trim()
             text.ifBlank { null }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             null
         }
@@ -40,9 +45,11 @@ class TextExtractor @Inject constructor() {
      */
     suspend fun extractBlocksFromUri(context: Context, imageUri: Uri): List<String> {
         return try {
-            val image = InputImage.fromFilePath(context, imageUri)
+            val image = withContext(Dispatchers.IO) { InputImage.fromFilePath(context, imageUri) }
             val result = recognizer.process(image).await()
             result.textBlocks.map { it.text }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             emptyList()
         }

@@ -1,22 +1,19 @@
 package com.example.unibox.presentation.settings
 
-import android.content.Context
-import android.os.Environment
+import android.net.Uri
+import com.example.unibox.data.export.LibraryExporter
+import kotlinx.coroutines.CancellationException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.unibox.domain.repository.UniBoxRepository
 import com.example.unibox.domain.repository.WebPreviewPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.File
 import javax.inject.Inject
 
 /**
@@ -26,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val repository: UniBoxRepository,
-    @ApplicationContext private val context: Context,
+    private val libraryExporter: LibraryExporter,
     private val themePreferences: com.example.unibox.domain.repository.ThemePreferences,
     private val webPreviewPreferences: WebPreviewPreferences
 ) : ViewModel() {
@@ -96,59 +93,28 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun exportData() {
+    private val _isExporting = MutableStateFlow(false)
+    val isExporting = _isExporting.asStateFlow()
+
+    fun exportData(destination: Uri?) {
+        if (destination == null || _isExporting.value) return
+        _isExporting.value = true
         viewModelScope.launch {
             try {
-                val items = repository.getAllItemsSync()
-                val jsonArray = JSONArray()
-
-                for (item in items) {
-                    val obj = JSONObject().apply {
-                        put("id", item.id)
-                        put("title", item.title)
-                        put("description", item.description)
-                        put("url", item.url ?: JSONObject.NULL)
-                        put("thumbnailUrl", item.thumbnailUrl ?: JSONObject.NULL)
-                        put("extractedText", item.extractedText ?: JSONObject.NULL)
-                        put("category", item.category.name)
-                        put("sourceApp", item.sourceApp ?: JSONObject.NULL)
-                        put("timestamp", item.timestamp)
-                        put("latitude", item.latitude ?: JSONObject.NULL)
-                        put("longitude", item.longitude ?: JSONObject.NULL)
-                        put("locationLabel", item.locationLabel ?: JSONObject.NULL)
-                        put("imageUri", item.imageUri ?: JSONObject.NULL)
-                        put("imageUris", JSONArray(item.imageUris))
-                        put("status", item.status.name)
-                        put("isFavorite", item.isFavorite)
-                        put("snoozedUntil", item.snoozedUntil ?: JSONObject.NULL)
-                        put("userNote", item.userNote)
-                        put("collectionName", item.collectionName ?: JSONObject.NULL)
-                        put("tags", JSONArray(item.tags))
-                        put("organizationReviewed", item.organizationReviewed)
-                        put("enrichmentStatus", item.enrichmentStatus.name)
-                        put("enrichmentProvider", item.enrichmentProvider ?: JSONObject.NULL)
-                        put("enrichmentError", item.enrichmentError ?: JSONObject.NULL)
-                        put("canonicalUrl", item.canonicalUrl ?: JSONObject.NULL)
-                        put("webSiteName", item.webSiteName ?: JSONObject.NULL)
-                        put("webAuthor", item.webAuthor ?: JSONObject.NULL)
-                        put("webPublishedAt", item.webPublishedAt ?: JSONObject.NULL)
-                        put("webLanguage", item.webLanguage ?: JSONObject.NULL)
-                        put("webReadingTimeMinutes", item.webReadingTimeMinutes ?: JSONObject.NULL)
-                        put("lastEnrichedAt", item.lastEnrichedAt ?: JSONObject.NULL)
-                        put("updatedAt", item.updatedAt)
-                    }
-                    jsonArray.put(obj)
-                }
-
-                val docsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-                val file = File(docsDir, "unibox_export.json")
-                file.writeText(jsonArray.toString(2))
-
-                _exportStatus.value = "Exported ${items.size} items to Documents/unibox_export.json"
-            } catch (e: Exception) {
-                _exportStatus.value = "Export failed: ${e.message}"
+                val count = libraryExporter.exportTo(destination)
+                _exportStatus.value = "Exported $count items to your selected file"
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                _exportStatus.value = "Export failed. Choose a writable location and try again."
+            } finally {
+                _isExporting.value = false
             }
         }
+    }
+
+    fun exportPickerUnavailable() {
+        _exportStatus.value = "No file picker is available on this device."
     }
 
     fun clearAllData() {

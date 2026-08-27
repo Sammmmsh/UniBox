@@ -1,5 +1,8 @@
 package com.example.unibox.presentation.settings
 
+import android.content.ActivityNotFoundException
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.KeyboardType
@@ -63,6 +68,7 @@ fun SettingsScreen(
 ) {
     val itemCount by viewModel.itemCount.collectAsState()
     val exportStatus by viewModel.exportStatus.collectAsState()
+    val isExporting by viewModel.isExporting.collectAsState()
     val clearStatus by viewModel.clearStatus.collectAsState()
     val webPreviewStatus by viewModel.webPreviewStatus.collectAsState()
     val firecrawlEnabled by viewModel.firecrawlEnabled.collectAsState()
@@ -72,6 +78,14 @@ fun SettingsScreen(
     var showClearDialog by remember { mutableStateOf(false) }
     var showFirecrawlDialog by remember { mutableStateOf(false) }
     var showApiKeyDialog by remember { mutableStateOf(false) }
+    val exportDocument = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json"),
+        viewModel::exportData
+    )
+    val context = LocalContext.current
+    val versionName = remember(context) {
+        context.packageManager.getPackageInfo(context.packageName, 0).versionName.orEmpty()
+    }
 
     // Show status messages via snackbar
     LaunchedEffect(exportStatus) {
@@ -129,7 +143,7 @@ fun SettingsScreen(
         ) {
             // App info header
             Text(
-                text = "UniBox v1.0",
+                text = "UniBox $versionName",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -276,10 +290,17 @@ fun SettingsScreen(
 
             // Export button
             OutlinedButton(
-                onClick = { viewModel.exportData() },
+                onClick = {
+                    try {
+                        exportDocument.launch("unibox-export.json")
+                    } catch (error: ActivityNotFoundException) {
+                        viewModel.exportPickerUnavailable()
+                    }
+                },
+                enabled = !isExporting,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp), // Above 48dp minimum
+                    .heightIn(min = 52.dp),
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Icon(
@@ -287,17 +308,24 @@ fun SettingsScreen(
                     contentDescription = null,
                     modifier = Modifier.padding(end = 8.dp)
                 )
-                Text("Export All Data (JSON)")
+                Text(if (isExporting) "Exporting library..." else "Export library (JSON)")
             }
 
             Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Choose where to save your notes, tags, and metadata. Image files and API keys are not included. JSON export cannot be restored in the app.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Clear data button
             OutlinedButton(
                 onClick = { showClearDialog = true },
+                enabled = !isExporting,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp), // Above 48dp minimum
+                    .heightIn(min = 52.dp),
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.error

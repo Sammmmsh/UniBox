@@ -59,7 +59,7 @@ Follow these steps to get a local copy up and running.
 
 - Android Studio (Jellyfish 2023.3.1 or later recommended).
 - Java Development Kit (JDK) 17+.
-- Minimum Android SDK 24 (Android 7.0), Target SDK 34.
+- Minimum Android SDK 26 (Android 8.0), compile/target SDK 34.
 
 ### Installation
 
@@ -75,6 +75,19 @@ Follow these steps to get a local copy up and running.
 3. **Build and Run:**
    - Select an emulator or connected physical device.
    - Click the "Run" button (`Shift + F10`).
+
+The Gradle 8.6 wrapper is included. From PowerShell, run `./gradlew.bat :app:assembleDebug`.
+For verification commands, the separately installed minified preview, and the remaining
+store-release requirements, see [Release checklist](docs/RELEASE.md).
+
+### Export and safe sharing
+
+- Settings > Export library (JSON) opens Android's file picker so you choose where the file goes.
+  It contains all library records, including archived and snoozed items, tags, and notes.
+  Image files and API keys are not included, and JSON import/restore is not implemented.
+- Shared saves show progress and retryable errors. The full image selection is copied into
+  private storage before saving; a failed copy does not silently create an incomplete item.
+- The launcher supports themed icons on compatible Android launchers.
 
 ### Testing the Share Target
 

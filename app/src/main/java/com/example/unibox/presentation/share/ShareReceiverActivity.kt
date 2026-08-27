@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.compose.BackHandler
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.example.unibox.domain.model.ThemeMode
 import com.example.unibox.domain.repository.ThemePreferences
@@ -42,6 +44,11 @@ class ShareReceiverActivity : ComponentActivity() {
         val sharedData = parseIncomingIntent(intent)
 
         setContent {
+            val saveState by shareViewModel.saveState.collectAsState()
+            BackHandler(enabled = saveState.isSaving) { }
+            LaunchedEffect(saveState.savedItemId) {
+                if (saveState.savedItemId != null) finish()
+            }
             val themeMode by themePreferences.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
             val darkTheme = when (themeMode) {
                 ThemeMode.LIGHT -> false
@@ -53,11 +60,8 @@ class ShareReceiverActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     ShareReceiverScreen(
                         sharedData = sharedData,
-                        onSave = {
-                            shareViewModel.saveSharedContent(sharedData) {
-                                finish()
-                            }
-                        },
+                        saveState = saveState,
+                        onSave = { shareViewModel.saveSharedContent(sharedData) },
                         onDiscard = { finish() },
                         modifier = Modifier.padding(innerPadding)
                     )
@@ -172,6 +176,11 @@ data class SharedData(
     val sourcePackage: String = "Unknown"
 ) {
     val imageUri: String? get() = imageUris.firstOrNull()
+    val hasSaveableContent: Boolean get() = when (type) {
+        SharedDataType.TEXT -> rawText.isNotBlank() || !url.isNullOrBlank()
+        SharedDataType.IMAGE, SharedDataType.MULTI_IMAGE -> imageUris.isNotEmpty()
+        SharedDataType.UNKNOWN -> false
+    }
 }
 
 enum class SharedDataType(val label: String) {

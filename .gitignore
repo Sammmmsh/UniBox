@@ -17,3 +17,9 @@ local.properties
 
 # Obsidian vault (Optional: you might want to keep this or ignore it!)
 # /UniBox_Obsidian_Vault/
+
+# Personal release credentials and local research
+*.jks
+*.keystore
+/keystore.properties
+/.firecrawl/

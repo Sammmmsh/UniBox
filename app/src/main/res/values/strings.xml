@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">UniBox</string>
+    <string name="share_target_name">Save to UniBox</string>
 </resources>
