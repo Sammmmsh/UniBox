@@ -55,6 +55,60 @@ interface UniBoxItemDao {
     @Update
     suspend fun updateItem(item: UniBoxItemEntity)
 
+    // Preview jobs only own these columns, so a slow request cannot revert user edits.
+    @Query("""
+        UPDATE unibox_items SET
+            title = CASE WHEN TRIM(title) = '' OR title = url
+                THEN COALESCE(:pageTitle, title) ELSE title END,
+            description = CASE WHEN TRIM(description) = '' OR description = url
+                THEN COALESCE(:pageDescription, description) ELSE description END,
+            thumbnailUrl = COALESCE(:imageUrl, thumbnailUrl),
+            extractedText = CASE WHEN imageUri IS NULL AND imageUrisJson = '[]'
+                THEN COALESCE(:pageContent, extractedText) ELSE extractedText END,
+            enrichmentStatus = :previewStatus,
+            enrichmentProvider = :provider,
+            enrichmentError = :error,
+            canonicalUrl = COALESCE(:pageUrl, canonicalUrl),
+            webSiteName = COALESCE(:siteName, webSiteName),
+            webAuthor = COALESCE(:author, webAuthor),
+            webPublishedAt = COALESCE(:publishedAt, webPublishedAt),
+            webLanguage = COALESCE(:language, webLanguage),
+            webReadingTimeMinutes = COALESCE(:readingTimeMinutes, webReadingTimeMinutes),
+            lastEnrichedAt = :enrichedAt
+        WHERE id = :id AND url = :expectedUrl
+    """)
+    suspend fun applyWebPreview(
+        id: Long,
+        expectedUrl: String,
+        pageTitle: String?,
+        pageDescription: String?,
+        imageUrl: String?,
+        pageContent: String?,
+        previewStatus: String,
+        provider: String,
+        error: String?,
+        pageUrl: String?,
+        siteName: String?,
+        author: String?,
+        publishedAt: String?,
+        language: String?,
+        readingTimeMinutes: Int?,
+        enrichedAt: Long
+    ): Int
+
+    @Query("""
+        UPDATE unibox_items SET enrichmentStatus = :previewStatus,
+            enrichmentError = :error, lastEnrichedAt = :attemptedAt
+        WHERE id = :id AND url = :expectedUrl
+    """)
+    suspend fun updateWebPreviewState(
+        id: Long,
+        expectedUrl: String,
+        previewStatus: String,
+        error: String?,
+        attemptedAt: Long
+    ): Int
+
     @Delete
     suspend fun deleteItem(item: UniBoxItemEntity)
 

@@ -1,18 +1,13 @@
 package com.example.unibox.presentation.main
 
 import android.app.Activity
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
-import com.example.unibox.data.workers.MetadataWorker
+import com.example.unibox.data.workers.MetadataWorkScheduler
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.ItemStatus
 import com.example.unibox.domain.model.UniBoxItem
+import com.example.unibox.domain.model.WebEnrichmentStatus
 import com.example.unibox.domain.repository.UniBoxRepository
 import com.example.unibox.domain.usecase.DeleteItemUseCase
 import com.example.unibox.domain.usecase.GetItemsUseCase
@@ -22,7 +17,6 @@ import com.example.unibox.domain.usecase.UpdateItemUseCase
 import com.example.unibox.util.ConnectivityObserver
 import com.example.unibox.util.SmartReviewManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -82,7 +76,7 @@ class MainViewModel @Inject constructor(
     private val updateItemUseCase: UpdateItemUseCase,
     private val deleteItemUseCase: DeleteItemUseCase,
     private val repository: UniBoxRepository,
-    @ApplicationContext private val appContext: Context,
+    private val metadataWorkScheduler: MetadataWorkScheduler,
     connectivityObserver: ConnectivityObserver,
     private val smartReviewManager: SmartReviewManager
 ) : ViewModel() {
@@ -205,22 +199,19 @@ class MainViewModel @Inject constructor(
                 description = if (url != null) text else "",
                 url = url,
                 category = categorizeText(text),
-                sourceApp = "Manual Entry"
+                sourceApp = "Manual Entry",
+                enrichmentStatus = if (url != null) {
+                    WebEnrichmentStatus.PENDING
+                } else {
+                    WebEnrichmentStatus.NOT_REQUIRED
+                }
             )
 
             val savedId = saveItemUseCase(item)
             smartReviewManager.incrementSaveCount()
 
             if (url != null) {
-                val request = OneTimeWorkRequestBuilder<MetadataWorker>()
-                    .setInputData(workDataOf(MetadataWorker.KEY_ITEM_ID to savedId))
-                    .setConstraints(
-                        Constraints.Builder()
-                            .setRequiredNetworkType(NetworkType.CONNECTED)
-                            .build()
-                    )
-                    .build()
-                WorkManager.getInstance(appContext).enqueue(request)
+                metadataWorkScheduler.enqueue(savedId)
             }
         }
     }

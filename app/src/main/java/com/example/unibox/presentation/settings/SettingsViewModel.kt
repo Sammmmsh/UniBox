@@ -5,6 +5,7 @@ import android.os.Environment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.unibox.domain.repository.UniBoxRepository
+import com.example.unibox.domain.repository.WebPreviewPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +27,8 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val repository: UniBoxRepository,
     @ApplicationContext private val context: Context,
-    private val themePreferences: com.example.unibox.domain.repository.ThemePreferences
+    private val themePreferences: com.example.unibox.domain.repository.ThemePreferences,
+    private val webPreviewPreferences: WebPreviewPreferences
 ) : ViewModel() {
 
     private val _exportStatus = MutableStateFlow<String?>(null)
@@ -34,6 +36,9 @@ class SettingsViewModel @Inject constructor(
 
     private val _clearStatus = MutableStateFlow<String?>(null)
     val clearStatus: StateFlow<String?> = _clearStatus.asStateFlow()
+
+    private val _webPreviewStatus = MutableStateFlow<String?>(null)
+    val webPreviewStatus: StateFlow<String?> = _webPreviewStatus.asStateFlow()
 
     val itemCount: StateFlow<Int> = repository.getItemCount()
         .stateIn(
@@ -49,9 +54,45 @@ class SettingsViewModel @Inject constructor(
             initialValue = com.example.unibox.domain.model.ThemeMode.SYSTEM
         )
 
+    val firecrawlEnabled: StateFlow<Boolean> = webPreviewPreferences.firecrawlEnabled
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
+
+    val hasFirecrawlApiKey: StateFlow<Boolean> = webPreviewPreferences.hasFirecrawlApiKey
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    fun saveFirecrawlApiKey(apiKey: String?) {
+        viewModelScope.launch {
+            try {
+                webPreviewPreferences.setFirecrawlApiKey(apiKey)
+                _webPreviewStatus.value = if (apiKey.isNullOrBlank()) {
+                    "Personal key removed"
+                } else {
+                    "Personal key saved securely on this device"
+                }
+            } catch (exception: Exception) {
+                _webPreviewStatus.value = "The key could not be saved securely. Please try again."
+            }
+        }
+    }
+
     fun setThemeMode(mode: com.example.unibox.domain.model.ThemeMode) {
         viewModelScope.launch {
             themePreferences.saveThemeMode(mode)
+        }
+    }
+
+    fun setFirecrawlEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            webPreviewPreferences.setFirecrawlEnabled(enabled)
+            _webPreviewStatus.value = if (enabled) {
+                "Enhanced web previews enabled"
+            } else {
+                "Using direct page previews"
+            }
         }
     }
 
@@ -83,6 +124,16 @@ class SettingsViewModel @Inject constructor(
                         put("userNote", item.userNote)
                         put("collectionName", item.collectionName ?: JSONObject.NULL)
                         put("tags", JSONArray(item.tags))
+                        put("enrichmentStatus", item.enrichmentStatus.name)
+                        put("enrichmentProvider", item.enrichmentProvider ?: JSONObject.NULL)
+                        put("enrichmentError", item.enrichmentError ?: JSONObject.NULL)
+                        put("canonicalUrl", item.canonicalUrl ?: JSONObject.NULL)
+                        put("webSiteName", item.webSiteName ?: JSONObject.NULL)
+                        put("webAuthor", item.webAuthor ?: JSONObject.NULL)
+                        put("webPublishedAt", item.webPublishedAt ?: JSONObject.NULL)
+                        put("webLanguage", item.webLanguage ?: JSONObject.NULL)
+                        put("webReadingTimeMinutes", item.webReadingTimeMinutes ?: JSONObject.NULL)
+                        put("lastEnrichedAt", item.lastEnrichedAt ?: JSONObject.NULL)
                         put("updatedAt", item.updatedAt)
                     }
                     jsonArray.put(obj)
@@ -116,5 +167,9 @@ class SettingsViewModel @Inject constructor(
 
     fun clearClearStatus() {
         _clearStatus.value = null
+    }
+
+    fun clearWebPreviewStatus() {
+        _webPreviewStatus.value = null
     }
 }

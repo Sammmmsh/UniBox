@@ -3,6 +3,7 @@ package com.example.unibox.data.local
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.ItemStatus
 import com.example.unibox.domain.model.UniBoxItem
+import com.example.unibox.domain.model.WebEnrichmentStatus
 import org.json.JSONArray
 
 // Mapping functions between Room entities and domain models.
@@ -34,6 +35,18 @@ fun UniBoxItemEntity.toDomainModel(): UniBoxItem {
         userNote = userNote,
         collectionName = collectionName,
         tags = tagsJson.toStringList(),
+        enrichmentStatus = runCatching {
+            WebEnrichmentStatus.valueOf(enrichmentStatus)
+        }.getOrDefault(WebEnrichmentStatus.NOT_REQUIRED),
+        enrichmentProvider = enrichmentProvider,
+        enrichmentError = enrichmentError,
+        canonicalUrl = canonicalUrl,
+        webSiteName = webSiteName,
+        webAuthor = webAuthor,
+        webPublishedAt = webPublishedAt,
+        webLanguage = webLanguage,
+        webReadingTimeMinutes = webReadingTimeMinutes,
+        lastEnrichedAt = lastEnrichedAt,
         updatedAt = updatedAt
     )
 }
@@ -60,6 +73,16 @@ fun UniBoxItem.toEntity(): UniBoxItemEntity {
         userNote = userNote,
         collectionName = collectionName,
         tagsJson = tags.toJsonArray(),
+        enrichmentStatus = enrichmentStatus.name,
+        enrichmentProvider = enrichmentProvider,
+        enrichmentError = enrichmentError,
+        canonicalUrl = canonicalUrl,
+        webSiteName = webSiteName,
+        webAuthor = webAuthor,
+        webPublishedAt = webPublishedAt,
+        webLanguage = webLanguage,
+        webReadingTimeMinutes = webReadingTimeMinutes,
+        lastEnrichedAt = lastEnrichedAt,
         updatedAt = updatedAt
     )
 }

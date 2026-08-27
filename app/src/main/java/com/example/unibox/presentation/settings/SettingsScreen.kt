@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -23,9 +24,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -40,6 +43,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
@@ -57,9 +64,14 @@ fun SettingsScreen(
     val itemCount by viewModel.itemCount.collectAsState()
     val exportStatus by viewModel.exportStatus.collectAsState()
     val clearStatus by viewModel.clearStatus.collectAsState()
+    val webPreviewStatus by viewModel.webPreviewStatus.collectAsState()
+    val firecrawlEnabled by viewModel.firecrawlEnabled.collectAsState()
+    val hasFirecrawlApiKey by viewModel.hasFirecrawlApiKey.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
     var showClearDialog by remember { mutableStateOf(false) }
+    var showFirecrawlDialog by remember { mutableStateOf(false) }
+    var showApiKeyDialog by remember { mutableStateOf(false) }
 
     // Show status messages via snackbar
     LaunchedEffect(exportStatus) {
@@ -72,6 +84,12 @@ fun SettingsScreen(
         clearStatus?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.clearClearStatus()
+        }
+    }
+    LaunchedEffect(webPreviewStatus) {
+        webPreviewStatus?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearWebPreviewStatus()
         }
     }
 
@@ -162,6 +180,62 @@ fun SettingsScreen(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(28.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "Web previews",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Enhanced extraction",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = if (firecrawlEnabled) {
+                            "Saved links are sent to Firecrawl for readable content and richer metadata."
+                        } else {
+                            "Off by default. UniBox reads basic metadata directly from each page."
+                        },
+                        modifier = Modifier.padding(top = 4.dp, end = 16.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Switch(
+                    modifier = Modifier.semantics { contentDescription = "Enhanced web extraction" },
+                    checked = firecrawlEnabled,
+                    onCheckedChange = { enabled ->
+                        if (enabled) showFirecrawlDialog = true
+                        else viewModel.setFirecrawlEnabled(false)
+                    }
+                )
+            }
+
+            TextButton(onClick = { showApiKeyDialog = true }) {
+                Text(if (hasFirecrawlApiKey) "Manage personal API key" else "Add personal API key")
+            }
+            Text(
+                text = "Optional for networks where keyless access is blocked. " +
+                    "Keys stay encrypted on this device; authenticated requests use your Firecrawl credits.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
             Spacer(modifier = Modifier.height(28.dp))
             HorizontalDivider()
@@ -294,6 +368,79 @@ fun SettingsScreen(
                 TextButton(onClick = { showClearDialog = false }) {
                     Text("Cancel")
                 }
+            }
+        )
+    }
+
+    if (showFirecrawlDialog) {
+        AlertDialog(
+            onDismissRequest = { showFirecrawlDialog = false },
+            title = { Text("Enable enhanced previews?") },
+            text = {
+                Text(
+                    "URLs you save or refresh will be sent to Firecrawl for extraction. " +
+                        "URLs can contain sensitive query parameters, so avoid private links. " +
+                        "UniBox will not send website cookies, website login credentials, local-network URLs, " +
+                        "or common tracking parameters."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showFirecrawlDialog = false
+                        viewModel.setFirecrawlEnabled(true)
+                    }
+                ) {
+                    Text("Enable")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showFirecrawlDialog = false }) {
+                    Text("Keep off")
+                }
+            }
+        )
+    }
+
+    if (showApiKeyDialog) {
+        var apiKey by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { showApiKeyDialog = false },
+            title = { Text("Personal Firecrawl key") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text("Enter your own Firecrawl API key. It is never included in exports or backups.")
+                    OutlinedTextField(
+                        value = apiKey,
+                        onValueChange = { apiKey = it.take(256) },
+                        label = { Text("API key") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        singleLine = true
+                    )
+                    if (hasFirecrawlApiKey) {
+                        TextButton(onClick = {
+                            viewModel.saveFirecrawlApiKey(null)
+                            showApiKeyDialog = false
+                        }) {
+                            Text("Remove saved key")
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.saveFirecrawlApiKey(apiKey.trim())
+                        showApiKeyDialog = false
+                    },
+                    enabled = apiKey.trim().isNotEmpty() && apiKey.trim().none(Char::isWhitespace)
+                ) {
+                    Text("Save key")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showApiKeyDialog = false }) { Text("Cancel") }
             }
         )
     }

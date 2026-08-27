@@ -4,15 +4,11 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
-import com.example.unibox.data.workers.MetadataWorker
 import com.example.unibox.data.media.MediaStorage
+import com.example.unibox.data.workers.MetadataWorkScheduler
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.UniBoxItem
+import com.example.unibox.domain.model.WebEnrichmentStatus
 import com.example.unibox.domain.usecase.SaveItemUseCase
 import com.example.unibox.ml.TextExtractor
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +21,7 @@ class ShareViewModel @Inject constructor(
     private val saveItemUseCase: SaveItemUseCase,
     private val textExtractor: TextExtractor,
     private val mediaStorage: MediaStorage,
+    private val metadataWorkScheduler: MetadataWorkScheduler,
     @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
@@ -54,32 +51,23 @@ class ShareViewModel @Inject constructor(
                 extractedText = extractedText,
                 category = categorize(sharedData, extractedText),
                 sourceApp = sharedData.sourcePackage,
-                timestamp = System.currentTimeMillis()
+                timestamp = System.currentTimeMillis(),
+                enrichmentStatus = if (sharedData.url != null) {
+                    WebEnrichmentStatus.PENDING
+                } else {
+                    WebEnrichmentStatus.NOT_REQUIRED
+                }
             )
 
             val savedId = saveItemUseCase(item)
 
             // If the item has a URL, enqueue a WorkManager job to fetch OpenGraph metadata
             if (sharedData.url != null) {
-                enqueueMetadataFetch(savedId)
+                metadataWorkScheduler.enqueue(savedId)
             }
 
             onComplete()
         }
-    }
-
-    private fun enqueueMetadataFetch(itemId: Long) {
-        val workRequest = OneTimeWorkRequestBuilder<MetadataWorker>()
-            .setInputData(workDataOf(MetadataWorker.KEY_ITEM_ID to itemId))
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-            )
-            .build()
-
-        WorkManager.getInstance(appContext)
-            .enqueue(workRequest)
     }
 
     private fun categorize(data: SharedData, extractedText: String?): Category {

@@ -30,5 +30,15 @@ data class UniBoxItemEntity(
     val userNote: String = "",
     val collectionName: String? = null,
     val tagsJson: String = "[]",
+    val enrichmentStatus: String = "NOT_REQUIRED",
+    val enrichmentProvider: String? = null,
+    val enrichmentError: String? = null,
+    val canonicalUrl: String? = null,
+    val webSiteName: String? = null,
+    val webAuthor: String? = null,
+    val webPublishedAt: String? = null,
+    val webLanguage: String? = null,
+    val webReadingTimeMinutes: Int? = null,
+    val lastEnrichedAt: Long? = null,
     val updatedAt: Long = System.currentTimeMillis()
 )

@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -25,7 +26,7 @@ class UniBoxDatabaseMigrationTest {
     }
 
     @Test
-    fun migrationFrom2To3PreservesItemsAndMatchesRoomSchema() {
+    fun migrationFrom2To4PreservesItemsAndMatchesRoomSchema() {
         val databaseFile = context.getDatabasePath(TEST_DATABASE)
         databaseFile.parentFile?.mkdirs()
 
@@ -61,14 +62,24 @@ class UniBoxDatabaseMigrationTest {
             )
             database.execSQL(
                 """INSERT INTO `unibox_items`(
-                    `title`, `description`, `category`, `timestamp`, `imageUrisJson`
-                ) VALUES ('Existing item', 'Preserved during upgrade', 'ARTICLE', 1000, '[]')""".trimIndent()
+                    `title`, `description`, `url`, `category`, `timestamp`, `imageUrisJson`
+                ) VALUES (
+                    'Existing item',
+                    'Preserved during upgrade',
+                    'https://example.com/article',
+                    'ARTICLE',
+                    1000,
+                    '[]'
+                )""".trimIndent()
             )
             database.version = 2
         }
 
         val database = Room.databaseBuilder(context, UniBoxDatabase::class.java, TEST_DATABASE)
-            .addMigrations(UniBoxDatabase.MIGRATION_2_3)
+            .addMigrations(
+                UniBoxDatabase.MIGRATION_2_3,
+                UniBoxDatabase.MIGRATION_3_4
+            )
             .allowMainThreadQueries()
             .build()
 
@@ -76,7 +87,8 @@ class UniBoxDatabaseMigrationTest {
             val upgradedDatabase = database.openHelper.writableDatabase
 
             upgradedDatabase.query(
-                """SELECT title, status, isFavorite, userNote, tagsJson, updatedAt
+                """SELECT title, status, isFavorite, userNote, tagsJson, updatedAt,
+                    enrichmentStatus
                     FROM unibox_items WHERE id = 1""".trimIndent()
             ).use { cursor ->
                 check(cursor.moveToFirst())
@@ -86,6 +98,7 @@ class UniBoxDatabaseMigrationTest {
                 assertEquals("", cursor.getString(3))
                 assertEquals("[]", cursor.getString(4))
                 assertEquals(0L, cursor.getLong(5))
+                assertEquals("PARTIAL", cursor.getString(6))
             }
 
             upgradedDatabase.query(
@@ -99,6 +112,73 @@ class UniBoxDatabaseMigrationTest {
             database.close()
         }
     }
+
+    @Test
+    fun previewWritesPreserveUserEditsAndIndexUrlOnlyContent() = runBlocking {
+        val database = Room.inMemoryDatabaseBuilder(context, UniBoxDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val dao = database.uniBoxItemDao()
+            val url = "https://example.com/article"
+            val imageItemId = dao.insertItem(
+                UniBoxItemEntity(
+                    title = "My edited title",
+                    description = "My description",
+                    url = url,
+                    userNote = "Keep this note",
+                    isFavorite = true,
+                    status = "SAVED",
+                    imageUri = "file:///test/image.jpg",
+                    extractedText = "Original OCR"
+                )
+            )
+            assertEquals(1, dao.applyTestPreview(imageItemId, url))
+            val imageItem = requireNotNull(dao.getItemByIdSync(imageItemId))
+            assertEquals("My edited title", imageItem.title)
+            assertEquals("My description", imageItem.description)
+            assertEquals("Keep this note", imageItem.userNote)
+            assertEquals(true, imageItem.isFavorite)
+            assertEquals("SAVED", imageItem.status)
+            assertEquals("Original OCR", imageItem.extractedText)
+
+            val linkItemId = dao.insertItem(UniBoxItemEntity(title = url, url = url))
+            assertEquals(1, dao.applyTestPreview(linkItemId, url))
+            val linkItem = requireNotNull(dao.getItemByIdSync(linkItemId))
+            assertEquals("Fetched title", linkItem.title)
+            assertEquals("Indexed body text", linkItem.extractedText)
+            assertEquals(0, dao.applyTestPreview(linkItemId, "https://example.com/stale"))
+
+            database.openHelper.readableDatabase.query(
+                "SELECT COUNT(*) FROM unibox_items_fts WHERE unibox_items_fts MATCH 'Indexed'"
+            ).use { cursor ->
+                check(cursor.moveToFirst())
+                assertEquals(1, cursor.getInt(0))
+            }
+        } finally {
+            database.close()
+        }
+    }
+
+    private suspend fun UniBoxItemDao.applyTestPreview(id: Long, url: String): Int =
+        applyWebPreview(
+            id = id,
+            expectedUrl = url,
+            pageTitle = "Fetched title",
+            pageDescription = "Fetched description",
+            imageUrl = null,
+            pageContent = "Indexed body text",
+            previewStatus = "COMPLETE",
+            provider = "Firecrawl",
+            error = null,
+            pageUrl = url,
+            siteName = "Example",
+            author = null,
+            publishedAt = null,
+            language = "en",
+            readingTimeMinutes = 1,
+            enrichedAt = 2000
+        )
 
     private companion object {
         const val TEST_DATABASE = "unibox-migration-test"

@@ -227,7 +227,7 @@ fun ShareReceiverScreen(
                         text = when (sharedData.type) {
                             SharedDataType.TEXT ->
                                 if (sharedData.url != null)
-                                    "UniBox will fetch the page title, description, and thumbnail in the background."
+                                    "UniBox will build a searchable page preview in the background. Enhanced extraction is controlled in Settings."
                                 else
                                     "This text will be saved and made fully searchable."
                             SharedDataType.IMAGE, SharedDataType.MULTI_IMAGE ->

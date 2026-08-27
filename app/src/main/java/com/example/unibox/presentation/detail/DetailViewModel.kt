@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.unibox.domain.model.UniBoxItem
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.ItemStatus
+import com.example.unibox.domain.model.WebEnrichmentStatus
 import com.example.unibox.domain.repository.UniBoxRepository
+import com.example.unibox.data.workers.MetadataWorkScheduler
 import com.example.unibox.location.GeofenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +30,8 @@ data class DetailUiState(
 class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repository: UniBoxRepository,
-    private val geofenceManager: GeofenceManager
+    private val geofenceManager: GeofenceManager,
+    private val metadataWorkScheduler: MetadataWorkScheduler
 ) : ViewModel() {
 
     private val itemId: Long = savedStateHandle.get<Long>("itemId") ?: -1L
@@ -119,6 +122,21 @@ class DetailViewModel @Inject constructor(
 
     fun clearSnooze() = updateCurrentItem("Returned to inbox") { item ->
         item.copy(snoozedUntil = null)
+    }
+
+    fun retryWebPreview() {
+        val item = _uiState.value.item?.takeIf { it.url != null } ?: return
+        viewModelScope.launch {
+            repository.updateItem(
+                item.copy(
+                    enrichmentStatus = WebEnrichmentStatus.PENDING,
+                    enrichmentError = null,
+                    updatedAt = System.currentTimeMillis()
+                )
+            )
+            metadataWorkScheduler.enqueue(item.id, replaceExisting = true)
+            _uiState.update { it.copy(actionMessage = "Refreshing web preview") }
+        }
     }
 
     fun updateItemDetails(

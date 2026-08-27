@@ -30,6 +30,8 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.StarBorder
@@ -41,6 +43,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -73,6 +76,7 @@ import coil.compose.AsyncImage
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.ItemStatus
 import com.example.unibox.domain.model.UniBoxItem
+import com.example.unibox.domain.model.WebEnrichmentStatus
 import com.example.unibox.presentation.components.CategoryChip
 import com.example.unibox.presentation.components.SkeletonDetailScreen
 import java.text.SimpleDateFormat
@@ -176,6 +180,7 @@ fun DetailScreen(
                     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                 },
                 onSnooze = { showSnoozeDialog = true },
+                onRetryWebPreview = viewModel::retryWebPreview,
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -243,6 +248,7 @@ private fun ItemDetails(
     item: UniBoxItem,
     onOpenLink: (String) -> Unit,
     onSnooze: () -> Unit,
+    onRetryWebPreview: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -317,6 +323,13 @@ private fun ItemDetails(
                     )
                 }
 
+                if (item.url != null) {
+                    WebPreviewPanel(
+                        item = item,
+                        onRetry = onRetryWebPreview
+                    )
+                }
+
                 MetadataRow(item)
 
                 if (item.userNote.isNotBlank()) {
@@ -330,7 +343,13 @@ private fun ItemDetails(
                 }
 
                 if (!item.extractedText.isNullOrBlank()) {
-                    DetailSection(title = "Text found in this item") {
+                    DetailSection(
+                        title = if (item.url != null && item.imageUri == null && item.imageUris.isEmpty()) {
+                            "Readable page content"
+                        } else {
+                            "Text found in this item"
+                        }
+                    ) {
                         Text(
                             text = item.extractedText,
                             style = MaterialTheme.typography.bodyMedium,
@@ -389,6 +408,104 @@ private fun ItemDetails(
                             )
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WebPreviewPanel(
+    item: UniBoxItem,
+    onRetry: () -> Unit
+) {
+    if (item.enrichmentStatus == WebEnrichmentStatus.NOT_REQUIRED) return
+
+    val title = when (item.enrichmentStatus) {
+        WebEnrichmentStatus.PENDING -> "Building preview"
+        WebEnrichmentStatus.COMPLETE -> "Readable web preview"
+        WebEnrichmentStatus.PARTIAL -> "Basic web preview"
+        WebEnrichmentStatus.FAILED -> "Preview unavailable"
+        WebEnrichmentStatus.NOT_REQUIRED -> return
+    }
+    val supportingText = when (item.enrichmentStatus) {
+        WebEnrichmentStatus.PENDING -> "UniBox is reading this page in the background."
+        WebEnrichmentStatus.COMPLETE -> "The page content is available for search."
+        WebEnrichmentStatus.PARTIAL -> item.enrichmentError
+            ?: "Basic metadata is available. Enhanced extraction can be enabled in Settings."
+        WebEnrichmentStatus.FAILED -> item.enrichmentError
+            ?: "UniBox could not read this page."
+        WebEnrichmentStatus.NOT_REQUIRED -> ""
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Language,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = supportingText,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            if (item.enrichmentStatus == WebEnrichmentStatus.PENDING) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+
+            val webMetadata = buildList {
+                item.webSiteName?.let(::add)
+                item.webAuthor?.let { add("By $it") }
+                item.webReadingTimeMinutes?.let { add("$it min read") }
+                item.webLanguage?.let { add(it.uppercase()) }
+                item.webPublishedAt?.take(10)?.let(::add)
+            }
+            if (webMetadata.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    webMetadata.forEach { MetadataChip(it) }
+                }
+            }
+
+            if (item.enrichmentStatus in setOf(
+                    WebEnrichmentStatus.PARTIAL,
+                    WebEnrichmentStatus.FAILED
+                )
+            ) {
+                TextButton(onClick = onRetry) {
+                    Icon(
+                        imageVector = Icons.Outlined.Refresh,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text("Refresh preview", modifier = Modifier.padding(start = 8.dp))
                 }
             }
         }

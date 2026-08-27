@@ -7,7 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [UniBoxItemEntity::class, UniBoxItemFts::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class UniBoxDatabase : RoomDatabase() {
@@ -90,6 +90,26 @@ abstract class UniBoxDatabase : RoomDatabase() {
                         ); END""".trimIndent()
                 )
                 db.execSQL("INSERT INTO unibox_items_fts(unibox_items_fts) VALUES('rebuild')")
+            }
+        }
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE unibox_items ADD COLUMN enrichmentStatus TEXT NOT NULL DEFAULT 'NOT_REQUIRED'"
+                )
+                db.execSQL("ALTER TABLE unibox_items ADD COLUMN enrichmentProvider TEXT")
+                db.execSQL("ALTER TABLE unibox_items ADD COLUMN enrichmentError TEXT")
+                db.execSQL("ALTER TABLE unibox_items ADD COLUMN canonicalUrl TEXT")
+                db.execSQL("ALTER TABLE unibox_items ADD COLUMN webSiteName TEXT")
+                db.execSQL("ALTER TABLE unibox_items ADD COLUMN webAuthor TEXT")
+                db.execSQL("ALTER TABLE unibox_items ADD COLUMN webPublishedAt TEXT")
+                db.execSQL("ALTER TABLE unibox_items ADD COLUMN webLanguage TEXT")
+                db.execSQL("ALTER TABLE unibox_items ADD COLUMN webReadingTimeMinutes INTEGER")
+                db.execSQL("ALTER TABLE unibox_items ADD COLUMN lastEnrichedAt INTEGER")
+                db.execSQL(
+                    "UPDATE unibox_items SET enrichmentStatus = 'PARTIAL' WHERE url IS NOT NULL"
+                )
             }
         }
     }

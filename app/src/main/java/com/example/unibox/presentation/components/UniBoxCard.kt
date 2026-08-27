@@ -23,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ import coil.compose.AsyncImage
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.ItemStatus
 import com.example.unibox.domain.model.UniBoxItem
+import com.example.unibox.domain.model.WebEnrichmentStatus
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -95,6 +97,15 @@ fun UniBoxCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                if (item.enrichmentStatus == WebEnrichmentStatus.PENDING) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(2.dp)
                     )
                 }
 

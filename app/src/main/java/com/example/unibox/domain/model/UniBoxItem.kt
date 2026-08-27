@@ -25,6 +25,16 @@ data class UniBoxItem(
     val userNote: String = "",
     val collectionName: String? = null,
     val tags: List<String> = emptyList(),
+    val enrichmentStatus: WebEnrichmentStatus = WebEnrichmentStatus.NOT_REQUIRED,
+    val enrichmentProvider: String? = null,
+    val enrichmentError: String? = null,
+    val canonicalUrl: String? = null,
+    val webSiteName: String? = null,
+    val webAuthor: String? = null,
+    val webPublishedAt: String? = null,
+    val webLanguage: String? = null,
+    val webReadingTimeMinutes: Int? = null,
+    val lastEnrichedAt: Long? = null,
     val updatedAt: Long = System.currentTimeMillis()
 )
 
@@ -32,6 +42,14 @@ enum class ItemStatus {
     INBOX,
     SAVED,
     ARCHIVED
+}
+
+enum class WebEnrichmentStatus {
+    NOT_REQUIRED,
+    PENDING,
+    COMPLETE,
+    PARTIAL,
+    FAILED
 }
 
 /**
