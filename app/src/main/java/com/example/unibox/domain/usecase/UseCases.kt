@@ -2,8 +2,11 @@ package com.example.unibox.domain.usecase
 
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.UniBoxItem
+import com.example.unibox.domain.organization.OrganizationEngine
 import com.example.unibox.domain.repository.UniBoxRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 // Use cases encapsulate a single business action.
@@ -34,10 +37,16 @@ class SearchItemsUseCase @Inject constructor(
 }
 
 class SaveItemUseCase @Inject constructor(
-    private val repository: UniBoxRepository
+    private val repository: UniBoxRepository,
+    private val organizationEngine: OrganizationEngine
 ) {
     suspend operator fun invoke(item: UniBoxItem): Long {
-        return repository.saveItem(item)
+        val category = withContext(Dispatchers.Default) {
+            if (item.category == Category.UNCATEGORIZED) {
+                organizationEngine.classify(item)?.value ?: Category.UNCATEGORIZED
+            } else item.category
+        }
+        return repository.saveItem(item.copy(category = category))
     }
 }
 

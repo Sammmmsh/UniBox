@@ -25,6 +25,7 @@ data class UniBoxItem(
     val userNote: String = "",
     val collectionName: String? = null,
     val tags: List<String> = emptyList(),
+    val organizationReviewed: Boolean = false,
     val enrichmentStatus: WebEnrichmentStatus = WebEnrichmentStatus.NOT_REQUIRED,
     val enrichmentProvider: String? = null,
     val enrichmentError: String? = null,

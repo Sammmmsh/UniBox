@@ -2,6 +2,7 @@ package com.example.unibox.domain.repository
 
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.UniBoxItem
+import com.example.unibox.domain.organization.OrganizationSelection
 import kotlinx.coroutines.flow.Flow
 
 // Repository interface — the domain layer defines WHAT it needs,
@@ -21,6 +22,13 @@ interface UniBoxRepository {
     suspend fun saveItem(item: UniBoxItem): Long
 
     suspend fun updateItem(item: UniBoxItem)
+
+    suspend fun applyOrganizationSuggestions(
+        expectedItem: UniBoxItem,
+        selection: OrganizationSelection
+    ): Boolean
+
+    suspend fun setOrganizationReviewed(id: Long, reviewed: Boolean)
 
     suspend fun deleteItem(id: Long)
 

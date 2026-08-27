@@ -1,6 +1,7 @@
 package com.example.unibox.data.local
 
 import androidx.room.Entity
+import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
 
 /**
@@ -30,6 +31,8 @@ data class UniBoxItemEntity(
     val userNote: String = "",
     val collectionName: String? = null,
     val tagsJson: String = "[]",
+    @ColumnInfo(defaultValue = "0")
+    val organizationReviewed: Boolean = false,
     val enrichmentStatus: String = "NOT_REQUIRED",
     val enrichmentProvider: String? = null,
     val enrichmentError: String? = null,

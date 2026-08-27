@@ -196,9 +196,8 @@ class MainViewModel @Inject constructor(
             val url = Regex("https?://\\S+", RegexOption.IGNORE_CASE).find(text)?.value
             val item = UniBoxItem(
                 title = url ?: text.take(80),
-                description = if (url != null) text else "",
+                description = if (url != null || text.length > 80) text else "",
                 url = url,
-                category = categorizeText(text),
                 sourceApp = "Manual Entry",
                 enrichmentStatus = if (url != null) {
                     WebEnrichmentStatus.PENDING
@@ -214,25 +213,6 @@ class MainViewModel @Inject constructor(
                 metadataWorkScheduler.enqueue(savedId)
             }
         }
-    }
-
-    private fun categorizeText(text: String): Category {
-        val lowerText = text.lowercase()
-        return when {
-            lowerText.containsAny("recipe", "cook", "bake", "ingredient", "preheat", "allrecipes.com") -> Category.RECIPE
-            lowerText.containsAny("restaurant", "pizza", "sushi", "cafe", "brunch", "food", "yelp.com", "doordash.com", "ubereats.com") -> Category.FOOD
-            lowerText.containsAny("flight", "hotel", "travel", "trip", "airport", "booking.com", "airbnb.com", "tripadvisor.com") -> Category.TRAVEL
-            lowerText.containsAny("kotlin", "android", "api", "code", "programming", "github.com", "stackoverflow.com", "dev.to", "medium.com") -> Category.TECH
-            lowerText.containsAny("buy", "sale", "discount", "price", "shop", "amazon.com", "ebay.com", "etsy.com", "nike.com") -> Category.SHOPPING
-            lowerText.containsAny("watch", "video", "trailer", "episode", "youtube.com", "youtu.be", "vimeo.com", "tiktok.com") -> Category.VIDEO
-            lowerText.containsAny("song", "album", "playlist", "artist", "spotify.com", "soundcloud.com", "music.apple.com") -> Category.MUSIC
-            lowerText.containsAny("twitter.com", "x.com", "instagram.com", "reddit.com") -> Category.SOCIAL
-            else -> Category.UNCATEGORIZED
-        }
-    }
-
-    private fun String.containsAny(vararg keywords: String): Boolean {
-        return keywords.any(::contains)
     }
 
     fun requestReviewIfEligible(activity: Activity) {

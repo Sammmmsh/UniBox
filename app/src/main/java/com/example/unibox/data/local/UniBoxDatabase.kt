@@ -7,7 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [UniBoxItemEntity::class, UniBoxItemFts::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class UniBoxDatabase : RoomDatabase() {
@@ -90,6 +90,14 @@ abstract class UniBoxDatabase : RoomDatabase() {
                         ); END""".trimIndent()
                 )
                 db.execSQL("INSERT INTO unibox_items_fts(unibox_items_fts) VALUES('rebuild')")
+            }
+        }
+
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE unibox_items ADD COLUMN organizationReviewed INTEGER NOT NULL DEFAULT 0"
+                )
             }
         }
 

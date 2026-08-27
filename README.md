@@ -14,7 +14,8 @@ UniBox is a Universal Smart Inbox for Android designed to solve digital hoarding
 <img width="561" height="377" alt="Screenshot 2026-07-12 042112" src="https://github.com/user-attachments/assets/3e9ea921-da0e-4846-9dac-a0d77cf652c7" />
 
 - **Share Target Integration**: Seamlessly save links, text, and images from any app (Chrome, Twitter, Instagram, etc.) directly into UniBox via the Android OS Share Sheet.
-- **Smart Auto-Categorization**: Automatically tags incoming links using smart categorization rules (e.g., YouTube -> Video, Amazon -> Shopping, Recipes -> Food).
+- **On-Device Categorization**: Manual saves and shared content use the same whole-word and hostname-aware rules. Unclear matches stay unsorted instead of receiving an arbitrary category.
+- **Reviewable Organization Suggestions**: Open a saved item to review suggested tags, a category for unsorted content, and a matching existing collection. Select what fits, apply it, or dismiss and revisit later. This runs locally without sending your library to a service.
 - **ML Kit OCR for Images**: When you share a screenshot, UniBox runs Google ML Kit Vision on-device to extract all text, making the image instantly searchable.
 - **Rich Link Previews**: Uses a background WorkManager to silently scrape OpenGraph tags (Title, Description, Image) from saved URLs using JSoup.
 - **Lightning Fast Search**: Powered by a Room Database with an **FTS4 Inverted Index** for instant, zero-lag full-text search across thousands of items.

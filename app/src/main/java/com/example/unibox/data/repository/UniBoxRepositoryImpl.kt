@@ -7,9 +7,12 @@ import com.example.unibox.data.local.toEntity
 import com.example.unibox.data.media.MediaStorage
 import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.UniBoxItem
+import com.example.unibox.domain.organization.OrganizationSelection
 import com.example.unibox.domain.repository.UniBoxRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.json.JSONArray
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -56,6 +59,31 @@ class UniBoxRepositoryImpl @Inject constructor(
 
     override suspend fun updateItem(item: UniBoxItem) {
         dao.updateItem(item.toEntity())
+    }
+
+    override suspend fun applyOrganizationSuggestions(
+        expectedItem: UniBoxItem,
+        selection: OrganizationSelection
+    ): Boolean {
+        if (selection.isEmpty) return false
+        val tags = (expectedItem.tags + selection.tags)
+            .map(String::trim)
+            .filter(String::isNotBlank)
+            .distinctBy { it.lowercase(Locale.ROOT) }
+        return dao.applyOrganizationSuggestions(
+            id = expectedItem.id,
+            category = selection.category?.name,
+            tagsJson = JSONArray(tags).toString(),
+            collectionName = selection.collectionName,
+            expectedCategory = expectedItem.category.name,
+            expectedTagsJson = JSONArray(expectedItem.tags).toString(),
+            expectedCollectionName = expectedItem.collectionName,
+            updatedAt = System.currentTimeMillis()
+        ) > 0
+    }
+
+    override suspend fun setOrganizationReviewed(id: Long, reviewed: Boolean) {
+        dao.setOrganizationReviewed(id, reviewed)
     }
 
     override suspend fun deleteItem(id: Long) {

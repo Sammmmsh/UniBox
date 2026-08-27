@@ -47,7 +47,8 @@ object AppModule {
             .addMigrations(
                 UniBoxDatabase.MIGRATION_1_2,
                 UniBoxDatabase.MIGRATION_2_3,
-                UniBoxDatabase.MIGRATION_3_4
+                UniBoxDatabase.MIGRATION_3_4,
+                UniBoxDatabase.MIGRATION_4_5
             )
             .build()
     }

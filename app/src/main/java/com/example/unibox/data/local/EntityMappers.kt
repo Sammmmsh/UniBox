@@ -35,6 +35,7 @@ fun UniBoxItemEntity.toDomainModel(): UniBoxItem {
         userNote = userNote,
         collectionName = collectionName,
         tags = tagsJson.toStringList(),
+        organizationReviewed = organizationReviewed,
         enrichmentStatus = runCatching {
             WebEnrichmentStatus.valueOf(enrichmentStatus)
         }.getOrDefault(WebEnrichmentStatus.NOT_REQUIRED),
@@ -73,6 +74,7 @@ fun UniBoxItem.toEntity(): UniBoxItemEntity {
         userNote = userNote,
         collectionName = collectionName,
         tagsJson = tags.toJsonArray(),
+        organizationReviewed = organizationReviewed,
         enrichmentStatus = enrichmentStatus.name,
         enrichmentProvider = enrichmentProvider,
         enrichmentError = enrichmentError,

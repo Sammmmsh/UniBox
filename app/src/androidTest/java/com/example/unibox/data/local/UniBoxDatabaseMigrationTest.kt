@@ -26,7 +26,7 @@ class UniBoxDatabaseMigrationTest {
     }
 
     @Test
-    fun migrationFrom2To4PreservesItemsAndMatchesRoomSchema() {
+    fun migrationFrom2To5PreservesItemsAndMatchesRoomSchema() {
         val databaseFile = context.getDatabasePath(TEST_DATABASE)
         databaseFile.parentFile?.mkdirs()
 
@@ -78,7 +78,8 @@ class UniBoxDatabaseMigrationTest {
         val database = Room.databaseBuilder(context, UniBoxDatabase::class.java, TEST_DATABASE)
             .addMigrations(
                 UniBoxDatabase.MIGRATION_2_3,
-                UniBoxDatabase.MIGRATION_3_4
+                UniBoxDatabase.MIGRATION_3_4,
+                UniBoxDatabase.MIGRATION_4_5
             )
             .allowMainThreadQueries()
             .build()
@@ -88,7 +89,7 @@ class UniBoxDatabaseMigrationTest {
 
             upgradedDatabase.query(
                 """SELECT title, status, isFavorite, userNote, tagsJson, updatedAt,
-                    enrichmentStatus
+                    enrichmentStatus, organizationReviewed
                     FROM unibox_items WHERE id = 1""".trimIndent()
             ).use { cursor ->
                 check(cursor.moveToFirst())
@@ -99,6 +100,7 @@ class UniBoxDatabaseMigrationTest {
                 assertEquals("[]", cursor.getString(4))
                 assertEquals(0L, cursor.getLong(5))
                 assertEquals("PARTIAL", cursor.getString(6))
+                assertEquals(0, cursor.getInt(7))
             }
 
             upgradedDatabase.query(

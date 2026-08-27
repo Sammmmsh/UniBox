@@ -77,6 +77,8 @@ import com.example.unibox.domain.model.Category
 import com.example.unibox.domain.model.ItemStatus
 import com.example.unibox.domain.model.UniBoxItem
 import com.example.unibox.domain.model.WebEnrichmentStatus
+import com.example.unibox.domain.organization.OrganizationSelection
+import com.example.unibox.domain.organization.OrganizationSuggestions
 import com.example.unibox.presentation.components.CategoryChip
 import com.example.unibox.presentation.components.SkeletonDetailScreen
 import java.text.SimpleDateFormat
@@ -181,6 +183,11 @@ fun DetailScreen(
                 },
                 onSnooze = { showSnoozeDialog = true },
                 onRetryWebPreview = viewModel::retryWebPreview,
+                suggestions = uiState.organizationSuggestions,
+                isApplyingOrganization = uiState.isApplyingOrganization,
+                onApplyOrganization = viewModel::applyOrganizationSuggestions,
+                onDismissOrganization = viewModel::dismissOrganizationSuggestions,
+                onReviewOrganization = viewModel::reviewOrganizationSuggestions,
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -249,6 +256,11 @@ private fun ItemDetails(
     onOpenLink: (String) -> Unit,
     onSnooze: () -> Unit,
     onRetryWebPreview: () -> Unit,
+    suggestions: OrganizationSuggestions,
+    isApplyingOrganization: Boolean,
+    onApplyOrganization: (OrganizationSelection) -> Unit,
+    onDismissOrganization: () -> Unit,
+    onReviewOrganization: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -323,14 +335,24 @@ private fun ItemDetails(
                     )
                 }
 
-                if (item.url != null) {
-                    WebPreviewPanel(
-                        item = item,
-                        onRetry = onRetryWebPreview
-                    )
+                MetadataRow(item)
+
+                if (!suggestions.isEmpty) {
+                    if (item.organizationReviewed) {
+                        TextButton(onClick = onReviewOrganization) { Text("Review suggestions") }
+                    } else {
+                        OrganizationSuggestionsCard(
+                            suggestions = suggestions,
+                            isApplying = isApplyingOrganization,
+                            onApply = onApplyOrganization,
+                            onDismiss = onDismissOrganization
+                        )
+                    }
                 }
 
-                MetadataRow(item)
+                if (item.url != null) {
+                    WebPreviewPanel(item = item, onRetry = onRetryWebPreview)
+                }
 
                 if (item.userNote.isNotBlank()) {
                     DetailSection(title = "Your note") {

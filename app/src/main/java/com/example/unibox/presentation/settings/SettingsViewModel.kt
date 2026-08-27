@@ -124,6 +124,7 @@ class SettingsViewModel @Inject constructor(
                         put("userNote", item.userNote)
                         put("collectionName", item.collectionName ?: JSONObject.NULL)
                         put("tags", JSONArray(item.tags))
+                        put("organizationReviewed", item.organizationReviewed)
                         put("enrichmentStatus", item.enrichmentStatus.name)
                         put("enrichmentProvider", item.enrichmentProvider ?: JSONObject.NULL)
                         put("enrichmentError", item.enrichmentError ?: JSONObject.NULL)

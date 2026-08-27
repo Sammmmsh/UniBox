@@ -55,6 +55,28 @@ interface UniBoxItemDao {
     @Update
     suspend fun updateItem(item: UniBoxItemEntity)
 
+    // Only update organization fields, and reject stale suggestions after another edit.
+    @Query("""
+        UPDATE unibox_items SET category = COALESCE(:category, category),
+            tagsJson = :tagsJson, collectionName = COALESCE(:collectionName, collectionName),
+            organizationReviewed = 1, updatedAt = :updatedAt
+        WHERE id = :id AND category = :expectedCategory AND tagsJson = :expectedTagsJson
+            AND collectionName IS :expectedCollectionName AND organizationReviewed = 0
+    """)
+    suspend fun applyOrganizationSuggestions(
+        id: Long,
+        category: String?,
+        tagsJson: String,
+        collectionName: String?,
+        expectedCategory: String,
+        expectedTagsJson: String,
+        expectedCollectionName: String?,
+        updatedAt: Long
+    ): Int
+
+    @Query("UPDATE unibox_items SET organizationReviewed = :reviewed WHERE id = :id")
+    suspend fun setOrganizationReviewed(id: Long, reviewed: Boolean)
+
     // Preview jobs only own these columns, so a slow request cannot revert user edits.
     @Query("""
         UPDATE unibox_items SET
