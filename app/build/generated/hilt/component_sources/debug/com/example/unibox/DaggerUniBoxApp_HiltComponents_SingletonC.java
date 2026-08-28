@@ -12,17 +12,27 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import androidx.work.ListenableWorker;
 import androidx.work.WorkerParameters;
+import com.example.unibox.data.export.LibraryExporter;
 import com.example.unibox.data.local.UniBoxDatabase;
 import com.example.unibox.data.local.UniBoxItemDao;
+import com.example.unibox.data.media.MediaStorage;
+import com.example.unibox.data.remote.FirecrawlClient;
 import com.example.unibox.data.remote.OpenGraphParser;
+import com.example.unibox.data.remote.PublicWebUrlValidator;
+import com.example.unibox.data.remote.WebContentEnricher;
+import com.example.unibox.data.workers.MetadataWorkScheduler;
 import com.example.unibox.data.workers.MetadataWorker;
 import com.example.unibox.data.workers.MetadataWorker_AssistedFactory;
 import com.example.unibox.di.AppModule_ProvideDatabaseFactory;
+import com.example.unibox.di.AppModule_ProvideHttpClientFactory;
 import com.example.unibox.di.AppModule_ProvideThemePreferencesFactory;
 import com.example.unibox.di.AppModule_ProvideUniBoxItemDaoFactory;
 import com.example.unibox.di.AppModule_ProvideUniBoxRepositoryFactory;
+import com.example.unibox.di.AppModule_ProvideWebPreviewPreferencesFactory;
+import com.example.unibox.domain.organization.OrganizationEngine;
 import com.example.unibox.domain.repository.ThemePreferences;
 import com.example.unibox.domain.repository.UniBoxRepository;
+import com.example.unibox.domain.repository.WebPreviewPreferences;
 import com.example.unibox.domain.usecase.DeleteItemUseCase;
 import com.example.unibox.domain.usecase.GetItemsUseCase;
 import com.example.unibox.domain.usecase.SaveItemUseCase;
@@ -36,6 +46,7 @@ import com.example.unibox.presentation.main.MainViewModel_HiltModules;
 import com.example.unibox.presentation.settings.SettingsViewModel;
 import com.example.unibox.presentation.settings.SettingsViewModel_HiltModules;
 import com.example.unibox.presentation.share.ShareReceiverActivity;
+import com.example.unibox.presentation.share.ShareReceiverActivity_MembersInjector;
 import com.example.unibox.presentation.share.ShareViewModel;
 import com.example.unibox.presentation.share.ShareViewModel_HiltModules;
 import com.example.unibox.util.ConnectivityObserver;
@@ -68,6 +79,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.Generated;
+import okhttp3.OkHttpClient;
 
 @DaggerGenerated
 @Generated(
@@ -397,6 +409,7 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
 
     @Override
     public void injectShareReceiverActivity(ShareReceiverActivity shareReceiverActivity) {
+      injectShareReceiverActivity2(shareReceiverActivity);
     }
 
     @Override
@@ -429,27 +442,32 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
       return instance;
     }
 
+    private ShareReceiverActivity injectShareReceiverActivity2(ShareReceiverActivity instance) {
+      ShareReceiverActivity_MembersInjector.injectThemePreferences(instance, singletonCImpl.provideThemePreferencesProvider.get());
+      return instance;
+    }
+
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_example_unibox_presentation_detail_DetailViewModel = "com.example.unibox.presentation.detail.DetailViewModel";
-
-      static String com_example_unibox_presentation_main_MainViewModel = "com.example.unibox.presentation.main.MainViewModel";
-
       static String com_example_unibox_presentation_settings_SettingsViewModel = "com.example.unibox.presentation.settings.SettingsViewModel";
+
+      static String com_example_unibox_presentation_detail_DetailViewModel = "com.example.unibox.presentation.detail.DetailViewModel";
 
       static String com_example_unibox_presentation_share_ShareViewModel = "com.example.unibox.presentation.share.ShareViewModel";
 
-      @KeepFieldType
-      DetailViewModel com_example_unibox_presentation_detail_DetailViewModel2;
-
-      @KeepFieldType
-      MainViewModel com_example_unibox_presentation_main_MainViewModel2;
+      static String com_example_unibox_presentation_main_MainViewModel = "com.example.unibox.presentation.main.MainViewModel";
 
       @KeepFieldType
       SettingsViewModel com_example_unibox_presentation_settings_SettingsViewModel2;
 
       @KeepFieldType
+      DetailViewModel com_example_unibox_presentation_detail_DetailViewModel2;
+
+      @KeepFieldType
       ShareViewModel com_example_unibox_presentation_share_ShareViewModel2;
+
+      @KeepFieldType
+      MainViewModel com_example_unibox_presentation_main_MainViewModel2;
     }
   }
 
@@ -489,7 +507,7 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
     }
 
     private SaveItemUseCase saveItemUseCase() {
-      return new SaveItemUseCase(singletonCImpl.provideUniBoxRepositoryProvider.get());
+      return new SaveItemUseCase(singletonCImpl.provideUniBoxRepositoryProvider.get(), new OrganizationEngine());
     }
 
     private DeleteItemUseCase deleteItemUseCase() {
@@ -517,25 +535,25 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_example_unibox_presentation_main_MainViewModel = "com.example.unibox.presentation.main.MainViewModel";
+      static String com_example_unibox_presentation_detail_DetailViewModel = "com.example.unibox.presentation.detail.DetailViewModel";
 
       static String com_example_unibox_presentation_settings_SettingsViewModel = "com.example.unibox.presentation.settings.SettingsViewModel";
 
+      static String com_example_unibox_presentation_main_MainViewModel = "com.example.unibox.presentation.main.MainViewModel";
+
       static String com_example_unibox_presentation_share_ShareViewModel = "com.example.unibox.presentation.share.ShareViewModel";
 
-      static String com_example_unibox_presentation_detail_DetailViewModel = "com.example.unibox.presentation.detail.DetailViewModel";
-
       @KeepFieldType
-      MainViewModel com_example_unibox_presentation_main_MainViewModel2;
+      DetailViewModel com_example_unibox_presentation_detail_DetailViewModel2;
 
       @KeepFieldType
       SettingsViewModel com_example_unibox_presentation_settings_SettingsViewModel2;
 
       @KeepFieldType
-      ShareViewModel com_example_unibox_presentation_share_ShareViewModel2;
+      MainViewModel com_example_unibox_presentation_main_MainViewModel2;
 
       @KeepFieldType
-      DetailViewModel com_example_unibox_presentation_detail_DetailViewModel2;
+      ShareViewModel com_example_unibox_presentation_share_ShareViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -560,16 +578,16 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
       public T get() {
         switch (id) {
           case 0: // com.example.unibox.presentation.detail.DetailViewModel 
-          return (T) new DetailViewModel(viewModelCImpl.savedStateHandle, singletonCImpl.provideUniBoxRepositoryProvider.get(), singletonCImpl.geofenceManagerProvider.get());
+          return (T) new DetailViewModel(viewModelCImpl.savedStateHandle, singletonCImpl.provideUniBoxRepositoryProvider.get(), singletonCImpl.geofenceManagerProvider.get(), singletonCImpl.metadataWorkSchedulerProvider.get(), new OrganizationEngine());
 
           case 1: // com.example.unibox.presentation.main.MainViewModel 
-          return (T) new MainViewModel(viewModelCImpl.getItemsUseCase(), viewModelCImpl.searchItemsUseCase(), viewModelCImpl.saveItemUseCase(), viewModelCImpl.deleteItemUseCase(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.connectivityObserverProvider.get(), singletonCImpl.smartReviewManagerProvider.get());
+          return (T) new MainViewModel(viewModelCImpl.getItemsUseCase(), viewModelCImpl.searchItemsUseCase(), viewModelCImpl.saveItemUseCase(), viewModelCImpl.deleteItemUseCase(), singletonCImpl.provideUniBoxRepositoryProvider.get(), singletonCImpl.metadataWorkSchedulerProvider.get(), singletonCImpl.connectivityObserverProvider.get(), singletonCImpl.smartReviewManagerProvider.get());
 
           case 2: // com.example.unibox.presentation.settings.SettingsViewModel 
-          return (T) new SettingsViewModel(singletonCImpl.provideUniBoxRepositoryProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideThemePreferencesProvider.get());
+          return (T) new SettingsViewModel(singletonCImpl.provideUniBoxRepositoryProvider.get(), singletonCImpl.libraryExporterProvider.get(), singletonCImpl.provideThemePreferencesProvider.get(), singletonCImpl.provideWebPreviewPreferencesProvider.get());
 
           case 3: // com.example.unibox.presentation.share.ShareViewModel 
-          return (T) new ShareViewModel(viewModelCImpl.saveItemUseCase(), singletonCImpl.textExtractorProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+          return (T) new ShareViewModel(viewModelCImpl.saveItemUseCase(), singletonCImpl.textExtractorProvider.get(), singletonCImpl.mediaStorageProvider.get(), singletonCImpl.metadataWorkSchedulerProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
         }
@@ -655,19 +673,33 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
 
     private Provider<UniBoxItemDao> provideUniBoxItemDaoProvider;
 
+    private Provider<OkHttpClient> provideHttpClientProvider;
+
+    private Provider<FirecrawlClient> firecrawlClientProvider;
+
     private Provider<OpenGraphParser> openGraphParserProvider;
+
+    private Provider<WebPreviewPreferences> provideWebPreviewPreferencesProvider;
+
+    private Provider<WebContentEnricher> webContentEnricherProvider;
 
     private Provider<MetadataWorker_AssistedFactory> metadataWorker_AssistedFactoryProvider;
 
     private Provider<ThemePreferences> provideThemePreferencesProvider;
 
+    private Provider<MediaStorage> mediaStorageProvider;
+
     private Provider<UniBoxRepository> provideUniBoxRepositoryProvider;
 
     private Provider<GeofenceManager> geofenceManagerProvider;
 
+    private Provider<MetadataWorkScheduler> metadataWorkSchedulerProvider;
+
     private Provider<ConnectivityObserver> connectivityObserverProvider;
 
     private Provider<SmartReviewManager> smartReviewManagerProvider;
+
+    private Provider<LibraryExporter> libraryExporterProvider;
 
     private Provider<TextExtractor> textExtractorProvider;
 
@@ -690,14 +722,21 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
     private void initialize(final ApplicationContextModule applicationContextModuleParam) {
       this.provideDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<UniBoxDatabase>(singletonCImpl, 2));
       this.provideUniBoxItemDaoProvider = DoubleCheck.provider(new SwitchingProvider<UniBoxItemDao>(singletonCImpl, 1));
-      this.openGraphParserProvider = DoubleCheck.provider(new SwitchingProvider<OpenGraphParser>(singletonCImpl, 3));
+      this.provideHttpClientProvider = DoubleCheck.provider(new SwitchingProvider<OkHttpClient>(singletonCImpl, 5));
+      this.firecrawlClientProvider = DoubleCheck.provider(new SwitchingProvider<FirecrawlClient>(singletonCImpl, 4));
+      this.openGraphParserProvider = DoubleCheck.provider(new SwitchingProvider<OpenGraphParser>(singletonCImpl, 6));
+      this.provideWebPreviewPreferencesProvider = DoubleCheck.provider(new SwitchingProvider<WebPreviewPreferences>(singletonCImpl, 7));
+      this.webContentEnricherProvider = DoubleCheck.provider(new SwitchingProvider<WebContentEnricher>(singletonCImpl, 3));
       this.metadataWorker_AssistedFactoryProvider = SingleCheck.provider(new SwitchingProvider<MetadataWorker_AssistedFactory>(singletonCImpl, 0));
-      this.provideThemePreferencesProvider = DoubleCheck.provider(new SwitchingProvider<ThemePreferences>(singletonCImpl, 4));
-      this.provideUniBoxRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<UniBoxRepository>(singletonCImpl, 5));
-      this.geofenceManagerProvider = DoubleCheck.provider(new SwitchingProvider<GeofenceManager>(singletonCImpl, 6));
-      this.connectivityObserverProvider = DoubleCheck.provider(new SwitchingProvider<ConnectivityObserver>(singletonCImpl, 7));
-      this.smartReviewManagerProvider = DoubleCheck.provider(new SwitchingProvider<SmartReviewManager>(singletonCImpl, 8));
-      this.textExtractorProvider = DoubleCheck.provider(new SwitchingProvider<TextExtractor>(singletonCImpl, 9));
+      this.provideThemePreferencesProvider = DoubleCheck.provider(new SwitchingProvider<ThemePreferences>(singletonCImpl, 8));
+      this.mediaStorageProvider = DoubleCheck.provider(new SwitchingProvider<MediaStorage>(singletonCImpl, 10));
+      this.provideUniBoxRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<UniBoxRepository>(singletonCImpl, 9));
+      this.geofenceManagerProvider = DoubleCheck.provider(new SwitchingProvider<GeofenceManager>(singletonCImpl, 11));
+      this.metadataWorkSchedulerProvider = DoubleCheck.provider(new SwitchingProvider<MetadataWorkScheduler>(singletonCImpl, 12));
+      this.connectivityObserverProvider = DoubleCheck.provider(new SwitchingProvider<ConnectivityObserver>(singletonCImpl, 13));
+      this.smartReviewManagerProvider = DoubleCheck.provider(new SwitchingProvider<SmartReviewManager>(singletonCImpl, 14));
+      this.libraryExporterProvider = DoubleCheck.provider(new SwitchingProvider<LibraryExporter>(singletonCImpl, 15));
+      this.textExtractorProvider = DoubleCheck.provider(new SwitchingProvider<TextExtractor>(singletonCImpl, 16));
     }
 
     @Override
@@ -743,7 +782,7 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
           return (T) new MetadataWorker_AssistedFactory() {
             @Override
             public MetadataWorker create(Context appContext, WorkerParameters workerParams) {
-              return new MetadataWorker(appContext, workerParams, singletonCImpl.provideUniBoxItemDaoProvider.get(), singletonCImpl.openGraphParserProvider.get());
+              return new MetadataWorker(appContext, workerParams, singletonCImpl.provideUniBoxItemDaoProvider.get(), singletonCImpl.webContentEnricherProvider.get());
             }
           };
 
@@ -753,25 +792,46 @@ public final class DaggerUniBoxApp_HiltComponents_SingletonC {
           case 2: // com.example.unibox.data.local.UniBoxDatabase 
           return (T) AppModule_ProvideDatabaseFactory.provideDatabase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 3: // com.example.unibox.data.remote.OpenGraphParser 
-          return (T) new OpenGraphParser();
+          case 3: // com.example.unibox.data.remote.WebContentEnricher 
+          return (T) new WebContentEnricher(singletonCImpl.firecrawlClientProvider.get(), singletonCImpl.openGraphParserProvider.get(), new PublicWebUrlValidator(), singletonCImpl.provideWebPreviewPreferencesProvider.get());
 
-          case 4: // com.example.unibox.domain.repository.ThemePreferences 
+          case 4: // com.example.unibox.data.remote.FirecrawlClient 
+          return (T) new FirecrawlClient(singletonCImpl.provideHttpClientProvider.get());
+
+          case 5: // okhttp3.OkHttpClient 
+          return (T) AppModule_ProvideHttpClientFactory.provideHttpClient();
+
+          case 6: // com.example.unibox.data.remote.OpenGraphParser 
+          return (T) new OpenGraphParser(singletonCImpl.provideHttpClientProvider.get(), new PublicWebUrlValidator());
+
+          case 7: // com.example.unibox.domain.repository.WebPreviewPreferences 
+          return (T) AppModule_ProvideWebPreviewPreferencesFactory.provideWebPreviewPreferences(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 8: // com.example.unibox.domain.repository.ThemePreferences 
           return (T) AppModule_ProvideThemePreferencesFactory.provideThemePreferences(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 5: // com.example.unibox.domain.repository.UniBoxRepository 
-          return (T) AppModule_ProvideUniBoxRepositoryFactory.provideUniBoxRepository(singletonCImpl.provideUniBoxItemDaoProvider.get());
+          case 9: // com.example.unibox.domain.repository.UniBoxRepository 
+          return (T) AppModule_ProvideUniBoxRepositoryFactory.provideUniBoxRepository(singletonCImpl.provideUniBoxItemDaoProvider.get(), singletonCImpl.mediaStorageProvider.get());
 
-          case 6: // com.example.unibox.location.GeofenceManager 
+          case 10: // com.example.unibox.data.media.MediaStorage 
+          return (T) new MediaStorage(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 11: // com.example.unibox.location.GeofenceManager 
           return (T) new GeofenceManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 7: // com.example.unibox.util.ConnectivityObserver 
+          case 12: // com.example.unibox.data.workers.MetadataWorkScheduler 
+          return (T) new MetadataWorkScheduler(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 13: // com.example.unibox.util.ConnectivityObserver 
           return (T) new ConnectivityObserver(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 8: // com.example.unibox.util.SmartReviewManager 
+          case 14: // com.example.unibox.util.SmartReviewManager 
           return (T) new SmartReviewManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 9: // com.example.unibox.ml.TextExtractor 
+          case 15: // com.example.unibox.data.export.LibraryExporter 
+          return (T) new LibraryExporter(singletonCImpl.provideUniBoxRepositoryProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 16: // com.example.unibox.ml.TextExtractor 
           return (T) new TextExtractor();
 
           default: throw new AssertionError(id);

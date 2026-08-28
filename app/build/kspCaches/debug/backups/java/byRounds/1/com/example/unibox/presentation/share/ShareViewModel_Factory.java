@@ -1,6 +1,8 @@
 package com.example.unibox.presentation.share;
 
 import android.content.Context;
+import com.example.unibox.data.media.MediaStorage;
+import com.example.unibox.data.workers.MetadataWorkScheduler;
 import com.example.unibox.domain.usecase.SaveItemUseCase;
 import com.example.unibox.ml.TextExtractor;
 import dagger.internal.DaggerGenerated;
@@ -29,27 +31,38 @@ public final class ShareViewModel_Factory implements Factory<ShareViewModel> {
 
   private final Provider<TextExtractor> textExtractorProvider;
 
+  private final Provider<MediaStorage> mediaStorageProvider;
+
+  private final Provider<MetadataWorkScheduler> metadataWorkSchedulerProvider;
+
   private final Provider<Context> appContextProvider;
 
   public ShareViewModel_Factory(Provider<SaveItemUseCase> saveItemUseCaseProvider,
-      Provider<TextExtractor> textExtractorProvider, Provider<Context> appContextProvider) {
+      Provider<TextExtractor> textExtractorProvider, Provider<MediaStorage> mediaStorageProvider,
+      Provider<MetadataWorkScheduler> metadataWorkSchedulerProvider,
+      Provider<Context> appContextProvider) {
     this.saveItemUseCaseProvider = saveItemUseCaseProvider;
     this.textExtractorProvider = textExtractorProvider;
+    this.mediaStorageProvider = mediaStorageProvider;
+    this.metadataWorkSchedulerProvider = metadataWorkSchedulerProvider;
     this.appContextProvider = appContextProvider;
   }
 
   @Override
   public ShareViewModel get() {
-    return newInstance(saveItemUseCaseProvider.get(), textExtractorProvider.get(), appContextProvider.get());
+    return newInstance(saveItemUseCaseProvider.get(), textExtractorProvider.get(), mediaStorageProvider.get(), metadataWorkSchedulerProvider.get(), appContextProvider.get());
   }
 
   public static ShareViewModel_Factory create(Provider<SaveItemUseCase> saveItemUseCaseProvider,
-      Provider<TextExtractor> textExtractorProvider, Provider<Context> appContextProvider) {
-    return new ShareViewModel_Factory(saveItemUseCaseProvider, textExtractorProvider, appContextProvider);
+      Provider<TextExtractor> textExtractorProvider, Provider<MediaStorage> mediaStorageProvider,
+      Provider<MetadataWorkScheduler> metadataWorkSchedulerProvider,
+      Provider<Context> appContextProvider) {
+    return new ShareViewModel_Factory(saveItemUseCaseProvider, textExtractorProvider, mediaStorageProvider, metadataWorkSchedulerProvider, appContextProvider);
   }
 
   public static ShareViewModel newInstance(SaveItemUseCase saveItemUseCase,
-      TextExtractor textExtractor, Context appContext) {
-    return new ShareViewModel(saveItemUseCase, textExtractor, appContext);
+      TextExtractor textExtractor, MediaStorage mediaStorage,
+      MetadataWorkScheduler metadataWorkScheduler, Context appContext) {
+    return new ShareViewModel(saveItemUseCase, textExtractor, mediaStorage, metadataWorkScheduler, appContext);
   }
 }

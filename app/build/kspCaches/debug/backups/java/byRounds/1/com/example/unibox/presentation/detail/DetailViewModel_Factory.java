@@ -1,6 +1,8 @@
 package com.example.unibox.presentation.detail;
 
 import androidx.lifecycle.SavedStateHandle;
+import com.example.unibox.data.workers.MetadataWorkScheduler;
+import com.example.unibox.domain.organization.OrganizationEngine;
 import com.example.unibox.domain.repository.UniBoxRepository;
 import com.example.unibox.location.GeofenceManager;
 import dagger.internal.DaggerGenerated;
@@ -31,27 +33,38 @@ public final class DetailViewModel_Factory implements Factory<DetailViewModel> {
 
   private final Provider<GeofenceManager> geofenceManagerProvider;
 
+  private final Provider<MetadataWorkScheduler> metadataWorkSchedulerProvider;
+
+  private final Provider<OrganizationEngine> organizationEngineProvider;
+
   public DetailViewModel_Factory(Provider<SavedStateHandle> savedStateHandleProvider,
       Provider<UniBoxRepository> repositoryProvider,
-      Provider<GeofenceManager> geofenceManagerProvider) {
+      Provider<GeofenceManager> geofenceManagerProvider,
+      Provider<MetadataWorkScheduler> metadataWorkSchedulerProvider,
+      Provider<OrganizationEngine> organizationEngineProvider) {
     this.savedStateHandleProvider = savedStateHandleProvider;
     this.repositoryProvider = repositoryProvider;
     this.geofenceManagerProvider = geofenceManagerProvider;
+    this.metadataWorkSchedulerProvider = metadataWorkSchedulerProvider;
+    this.organizationEngineProvider = organizationEngineProvider;
   }
 
   @Override
   public DetailViewModel get() {
-    return newInstance(savedStateHandleProvider.get(), repositoryProvider.get(), geofenceManagerProvider.get());
+    return newInstance(savedStateHandleProvider.get(), repositoryProvider.get(), geofenceManagerProvider.get(), metadataWorkSchedulerProvider.get(), organizationEngineProvider.get());
   }
 
   public static DetailViewModel_Factory create(Provider<SavedStateHandle> savedStateHandleProvider,
       Provider<UniBoxRepository> repositoryProvider,
-      Provider<GeofenceManager> geofenceManagerProvider) {
-    return new DetailViewModel_Factory(savedStateHandleProvider, repositoryProvider, geofenceManagerProvider);
+      Provider<GeofenceManager> geofenceManagerProvider,
+      Provider<MetadataWorkScheduler> metadataWorkSchedulerProvider,
+      Provider<OrganizationEngine> organizationEngineProvider) {
+    return new DetailViewModel_Factory(savedStateHandleProvider, repositoryProvider, geofenceManagerProvider, metadataWorkSchedulerProvider, organizationEngineProvider);
   }
 
   public static DetailViewModel newInstance(SavedStateHandle savedStateHandle,
-      UniBoxRepository repository, GeofenceManager geofenceManager) {
-    return new DetailViewModel(savedStateHandle, repository, geofenceManager);
+      UniBoxRepository repository, GeofenceManager geofenceManager,
+      MetadataWorkScheduler metadataWorkScheduler, OrganizationEngine organizationEngine) {
+    return new DetailViewModel(savedStateHandle, repository, geofenceManager, metadataWorkScheduler, organizationEngine);
   }
 }

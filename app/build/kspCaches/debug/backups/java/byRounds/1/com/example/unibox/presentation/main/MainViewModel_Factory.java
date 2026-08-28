@@ -1,6 +1,7 @@
 package com.example.unibox.presentation.main;
 
-import android.content.Context;
+import com.example.unibox.data.workers.MetadataWorkScheduler;
+import com.example.unibox.domain.repository.UniBoxRepository;
 import com.example.unibox.domain.usecase.DeleteItemUseCase;
 import com.example.unibox.domain.usecase.GetItemsUseCase;
 import com.example.unibox.domain.usecase.SaveItemUseCase;
@@ -15,7 +16,7 @@ import javax.annotation.processing.Generated;
 import javax.inject.Provider;
 
 @ScopeMetadata
-@QualifierMetadata("dagger.hilt.android.qualifiers.ApplicationContext")
+@QualifierMetadata
 @DaggerGenerated
 @Generated(
     value = "dagger.internal.codegen.ComponentProcessor",
@@ -37,7 +38,9 @@ public final class MainViewModel_Factory implements Factory<MainViewModel> {
 
   private final Provider<DeleteItemUseCase> deleteItemUseCaseProvider;
 
-  private final Provider<Context> appContextProvider;
+  private final Provider<UniBoxRepository> repositoryProvider;
+
+  private final Provider<MetadataWorkScheduler> metadataWorkSchedulerProvider;
 
   private final Provider<ConnectivityObserver> connectivityObserverProvider;
 
@@ -46,36 +49,42 @@ public final class MainViewModel_Factory implements Factory<MainViewModel> {
   public MainViewModel_Factory(Provider<GetItemsUseCase> getItemsUseCaseProvider,
       Provider<SearchItemsUseCase> searchItemsUseCaseProvider,
       Provider<SaveItemUseCase> saveItemUseCaseProvider,
-      Provider<DeleteItemUseCase> deleteItemUseCaseProvider, Provider<Context> appContextProvider,
+      Provider<DeleteItemUseCase> deleteItemUseCaseProvider,
+      Provider<UniBoxRepository> repositoryProvider,
+      Provider<MetadataWorkScheduler> metadataWorkSchedulerProvider,
       Provider<ConnectivityObserver> connectivityObserverProvider,
       Provider<SmartReviewManager> smartReviewManagerProvider) {
     this.getItemsUseCaseProvider = getItemsUseCaseProvider;
     this.searchItemsUseCaseProvider = searchItemsUseCaseProvider;
     this.saveItemUseCaseProvider = saveItemUseCaseProvider;
     this.deleteItemUseCaseProvider = deleteItemUseCaseProvider;
-    this.appContextProvider = appContextProvider;
+    this.repositoryProvider = repositoryProvider;
+    this.metadataWorkSchedulerProvider = metadataWorkSchedulerProvider;
     this.connectivityObserverProvider = connectivityObserverProvider;
     this.smartReviewManagerProvider = smartReviewManagerProvider;
   }
 
   @Override
   public MainViewModel get() {
-    return newInstance(getItemsUseCaseProvider.get(), searchItemsUseCaseProvider.get(), saveItemUseCaseProvider.get(), deleteItemUseCaseProvider.get(), appContextProvider.get(), connectivityObserverProvider.get(), smartReviewManagerProvider.get());
+    return newInstance(getItemsUseCaseProvider.get(), searchItemsUseCaseProvider.get(), saveItemUseCaseProvider.get(), deleteItemUseCaseProvider.get(), repositoryProvider.get(), metadataWorkSchedulerProvider.get(), connectivityObserverProvider.get(), smartReviewManagerProvider.get());
   }
 
   public static MainViewModel_Factory create(Provider<GetItemsUseCase> getItemsUseCaseProvider,
       Provider<SearchItemsUseCase> searchItemsUseCaseProvider,
       Provider<SaveItemUseCase> saveItemUseCaseProvider,
-      Provider<DeleteItemUseCase> deleteItemUseCaseProvider, Provider<Context> appContextProvider,
+      Provider<DeleteItemUseCase> deleteItemUseCaseProvider,
+      Provider<UniBoxRepository> repositoryProvider,
+      Provider<MetadataWorkScheduler> metadataWorkSchedulerProvider,
       Provider<ConnectivityObserver> connectivityObserverProvider,
       Provider<SmartReviewManager> smartReviewManagerProvider) {
-    return new MainViewModel_Factory(getItemsUseCaseProvider, searchItemsUseCaseProvider, saveItemUseCaseProvider, deleteItemUseCaseProvider, appContextProvider, connectivityObserverProvider, smartReviewManagerProvider);
+    return new MainViewModel_Factory(getItemsUseCaseProvider, searchItemsUseCaseProvider, saveItemUseCaseProvider, deleteItemUseCaseProvider, repositoryProvider, metadataWorkSchedulerProvider, connectivityObserverProvider, smartReviewManagerProvider);
   }
 
   public static MainViewModel newInstance(GetItemsUseCase getItemsUseCase,
       SearchItemsUseCase searchItemsUseCase, SaveItemUseCase saveItemUseCase,
-      DeleteItemUseCase deleteItemUseCase, Context appContext,
-      ConnectivityObserver connectivityObserver, SmartReviewManager smartReviewManager) {
-    return new MainViewModel(getItemsUseCase, searchItemsUseCase, saveItemUseCase, deleteItemUseCase, appContext, connectivityObserver, smartReviewManager);
+      DeleteItemUseCase deleteItemUseCase, UniBoxRepository repository,
+      MetadataWorkScheduler metadataWorkScheduler, ConnectivityObserver connectivityObserver,
+      SmartReviewManager smartReviewManager) {
+    return new MainViewModel(getItemsUseCase, searchItemsUseCase, saveItemUseCase, deleteItemUseCase, repository, metadataWorkScheduler, connectivityObserver, smartReviewManager);
   }
 }

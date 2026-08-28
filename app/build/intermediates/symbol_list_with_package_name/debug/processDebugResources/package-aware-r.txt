@@ -350,6 +350,7 @@ string on
 string range_end
 string range_start
 string selected
+string share_target_name
 string status_bar_notification_info_overflow
 string switch_role
 string tab
@@ -391,3 +392,6 @@ styleable Navigator android_label android_id route
 styleable SignInButton buttonSize colorScheme scopeUris
 styleable StateListDrawable android_dither android_visible android_variablePadding android_constantSize android_enterFadeDuration android_exitFadeDuration
 styleable StateListDrawableItem android_drawable
+xml backup_rules
+xml data_extraction_rules
+xml test_media_paths

@@ -1,6 +1,7 @@
 package com.example.unibox.di;
 
 import com.example.unibox.data.local.UniBoxItemDao;
+import com.example.unibox.data.media.MediaStorage;
 import com.example.unibox.domain.repository.UniBoxRepository;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -27,21 +28,26 @@ import javax.inject.Provider;
 public final class AppModule_ProvideUniBoxRepositoryFactory implements Factory<UniBoxRepository> {
   private final Provider<UniBoxItemDao> daoProvider;
 
-  public AppModule_ProvideUniBoxRepositoryFactory(Provider<UniBoxItemDao> daoProvider) {
+  private final Provider<MediaStorage> mediaStorageProvider;
+
+  public AppModule_ProvideUniBoxRepositoryFactory(Provider<UniBoxItemDao> daoProvider,
+      Provider<MediaStorage> mediaStorageProvider) {
     this.daoProvider = daoProvider;
+    this.mediaStorageProvider = mediaStorageProvider;
   }
 
   @Override
   public UniBoxRepository get() {
-    return provideUniBoxRepository(daoProvider.get());
+    return provideUniBoxRepository(daoProvider.get(), mediaStorageProvider.get());
   }
 
-  public static AppModule_ProvideUniBoxRepositoryFactory create(
-      Provider<UniBoxItemDao> daoProvider) {
-    return new AppModule_ProvideUniBoxRepositoryFactory(daoProvider);
+  public static AppModule_ProvideUniBoxRepositoryFactory create(Provider<UniBoxItemDao> daoProvider,
+      Provider<MediaStorage> mediaStorageProvider) {
+    return new AppModule_ProvideUniBoxRepositoryFactory(daoProvider, mediaStorageProvider);
   }
 
-  public static UniBoxRepository provideUniBoxRepository(UniBoxItemDao dao) {
-    return Preconditions.checkNotNullFromProvides(AppModule.INSTANCE.provideUniBoxRepository(dao));
+  public static UniBoxRepository provideUniBoxRepository(UniBoxItemDao dao,
+      MediaStorage mediaStorage) {
+    return Preconditions.checkNotNullFromProvides(AppModule.INSTANCE.provideUniBoxRepository(dao, mediaStorage));
   }
 }

@@ -1,5 +1,6 @@
 package com.example.unibox.domain.usecase;
 
+import com.example.unibox.domain.organization.OrganizationEngine;
 import com.example.unibox.domain.repository.UniBoxRepository;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -25,20 +26,26 @@ import javax.inject.Provider;
 public final class SaveItemUseCase_Factory implements Factory<SaveItemUseCase> {
   private final Provider<UniBoxRepository> repositoryProvider;
 
-  public SaveItemUseCase_Factory(Provider<UniBoxRepository> repositoryProvider) {
+  private final Provider<OrganizationEngine> organizationEngineProvider;
+
+  public SaveItemUseCase_Factory(Provider<UniBoxRepository> repositoryProvider,
+      Provider<OrganizationEngine> organizationEngineProvider) {
     this.repositoryProvider = repositoryProvider;
+    this.organizationEngineProvider = organizationEngineProvider;
   }
 
   @Override
   public SaveItemUseCase get() {
-    return newInstance(repositoryProvider.get());
+    return newInstance(repositoryProvider.get(), organizationEngineProvider.get());
   }
 
-  public static SaveItemUseCase_Factory create(Provider<UniBoxRepository> repositoryProvider) {
-    return new SaveItemUseCase_Factory(repositoryProvider);
+  public static SaveItemUseCase_Factory create(Provider<UniBoxRepository> repositoryProvider,
+      Provider<OrganizationEngine> organizationEngineProvider) {
+    return new SaveItemUseCase_Factory(repositoryProvider, organizationEngineProvider);
   }
 
-  public static SaveItemUseCase newInstance(UniBoxRepository repository) {
-    return new SaveItemUseCase(repository);
+  public static SaveItemUseCase newInstance(UniBoxRepository repository,
+      OrganizationEngine organizationEngine) {
+    return new SaveItemUseCase(repository, organizationEngine);
   }
 }

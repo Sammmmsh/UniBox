@@ -5,4 +5,8 @@ drawable ic_launcher_foreground
 mipmap ic_launcher
 mipmap ic_launcher_round
 string app_name
+string share_target_name
 style Theme.UniBox
+xml backup_rules
+xml data_extraction_rules
+xml test_media_paths

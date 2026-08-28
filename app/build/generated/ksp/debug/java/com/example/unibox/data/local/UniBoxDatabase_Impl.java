@@ -32,17 +32,17 @@ public final class UniBoxDatabase_Impl extends UniBoxDatabase {
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(1) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(5) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS `unibox_items` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `url` TEXT, `thumbnailUrl` TEXT, `extractedText` TEXT, `category` TEXT NOT NULL, `sourceApp` TEXT, `timestamp` INTEGER NOT NULL, `latitude` REAL, `longitude` REAL, `locationLabel` TEXT, `imageUri` TEXT)");
-        db.execSQL("CREATE VIRTUAL TABLE IF NOT EXISTS `unibox_items_fts` USING FTS4(`title` TEXT NOT NULL, `description` TEXT NOT NULL, `extractedText` TEXT, `url` TEXT, `sourceApp` TEXT, `category` TEXT NOT NULL, content=`unibox_items`)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `unibox_items` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `url` TEXT, `thumbnailUrl` TEXT, `extractedText` TEXT, `category` TEXT NOT NULL, `sourceApp` TEXT, `timestamp` INTEGER NOT NULL, `latitude` REAL, `longitude` REAL, `locationLabel` TEXT, `imageUri` TEXT, `imageUrisJson` TEXT NOT NULL, `status` TEXT NOT NULL, `isFavorite` INTEGER NOT NULL, `snoozedUntil` INTEGER, `userNote` TEXT NOT NULL, `collectionName` TEXT, `tagsJson` TEXT NOT NULL, `organizationReviewed` INTEGER NOT NULL DEFAULT 0, `enrichmentStatus` TEXT NOT NULL, `enrichmentProvider` TEXT, `enrichmentError` TEXT, `canonicalUrl` TEXT, `webSiteName` TEXT, `webAuthor` TEXT, `webPublishedAt` TEXT, `webLanguage` TEXT, `webReadingTimeMinutes` INTEGER, `lastEnrichedAt` INTEGER, `updatedAt` INTEGER NOT NULL)");
+        db.execSQL("CREATE VIRTUAL TABLE IF NOT EXISTS `unibox_items_fts` USING FTS4(`title` TEXT NOT NULL, `description` TEXT NOT NULL, `extractedText` TEXT, `url` TEXT, `sourceApp` TEXT, `category` TEXT NOT NULL, `userNote` TEXT NOT NULL, `collectionName` TEXT, `tagsJson` TEXT NOT NULL, content=`unibox_items`)");
         db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_BEFORE_UPDATE BEFORE UPDATE ON `unibox_items` BEGIN DELETE FROM `unibox_items_fts` WHERE `docid`=OLD.`rowid`; END");
         db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_BEFORE_DELETE BEFORE DELETE ON `unibox_items` BEGIN DELETE FROM `unibox_items_fts` WHERE `docid`=OLD.`rowid`; END");
-        db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_AFTER_UPDATE AFTER UPDATE ON `unibox_items` BEGIN INSERT INTO `unibox_items_fts`(`docid`, `title`, `description`, `extractedText`, `url`, `sourceApp`, `category`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`description`, NEW.`extractedText`, NEW.`url`, NEW.`sourceApp`, NEW.`category`); END");
-        db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_AFTER_INSERT AFTER INSERT ON `unibox_items` BEGIN INSERT INTO `unibox_items_fts`(`docid`, `title`, `description`, `extractedText`, `url`, `sourceApp`, `category`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`description`, NEW.`extractedText`, NEW.`url`, NEW.`sourceApp`, NEW.`category`); END");
+        db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_AFTER_UPDATE AFTER UPDATE ON `unibox_items` BEGIN INSERT INTO `unibox_items_fts`(`docid`, `title`, `description`, `extractedText`, `url`, `sourceApp`, `category`, `userNote`, `collectionName`, `tagsJson`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`description`, NEW.`extractedText`, NEW.`url`, NEW.`sourceApp`, NEW.`category`, NEW.`userNote`, NEW.`collectionName`, NEW.`tagsJson`); END");
+        db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_AFTER_INSERT AFTER INSERT ON `unibox_items` BEGIN INSERT INTO `unibox_items_fts`(`docid`, `title`, `description`, `extractedText`, `url`, `sourceApp`, `category`, `userNote`, `collectionName`, `tagsJson`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`description`, NEW.`extractedText`, NEW.`url`, NEW.`sourceApp`, NEW.`category`, NEW.`userNote`, NEW.`collectionName`, NEW.`tagsJson`); END");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e191406186b589d2640b662f7efe6680')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '695e1040d8021b114b9ae903e5e6b89c')");
       }
 
       @Override
@@ -88,15 +88,15 @@ public final class UniBoxDatabase_Impl extends UniBoxDatabase {
       public void onPostMigrate(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_BEFORE_UPDATE BEFORE UPDATE ON `unibox_items` BEGIN DELETE FROM `unibox_items_fts` WHERE `docid`=OLD.`rowid`; END");
         db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_BEFORE_DELETE BEFORE DELETE ON `unibox_items` BEGIN DELETE FROM `unibox_items_fts` WHERE `docid`=OLD.`rowid`; END");
-        db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_AFTER_UPDATE AFTER UPDATE ON `unibox_items` BEGIN INSERT INTO `unibox_items_fts`(`docid`, `title`, `description`, `extractedText`, `url`, `sourceApp`, `category`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`description`, NEW.`extractedText`, NEW.`url`, NEW.`sourceApp`, NEW.`category`); END");
-        db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_AFTER_INSERT AFTER INSERT ON `unibox_items` BEGIN INSERT INTO `unibox_items_fts`(`docid`, `title`, `description`, `extractedText`, `url`, `sourceApp`, `category`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`description`, NEW.`extractedText`, NEW.`url`, NEW.`sourceApp`, NEW.`category`); END");
+        db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_AFTER_UPDATE AFTER UPDATE ON `unibox_items` BEGIN INSERT INTO `unibox_items_fts`(`docid`, `title`, `description`, `extractedText`, `url`, `sourceApp`, `category`, `userNote`, `collectionName`, `tagsJson`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`description`, NEW.`extractedText`, NEW.`url`, NEW.`sourceApp`, NEW.`category`, NEW.`userNote`, NEW.`collectionName`, NEW.`tagsJson`); END");
+        db.execSQL("CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_unibox_items_fts_AFTER_INSERT AFTER INSERT ON `unibox_items` BEGIN INSERT INTO `unibox_items_fts`(`docid`, `title`, `description`, `extractedText`, `url`, `sourceApp`, `category`, `userNote`, `collectionName`, `tagsJson`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`description`, NEW.`extractedText`, NEW.`url`, NEW.`sourceApp`, NEW.`category`, NEW.`userNote`, NEW.`collectionName`, NEW.`tagsJson`); END");
       }
 
       @Override
       @NonNull
       public RoomOpenHelper.ValidationResult onValidateSchema(
           @NonNull final SupportSQLiteDatabase db) {
-        final HashMap<String, TableInfo.Column> _columnsUniboxItems = new HashMap<String, TableInfo.Column>(13);
+        final HashMap<String, TableInfo.Column> _columnsUniboxItems = new HashMap<String, TableInfo.Column>(32);
         _columnsUniboxItems.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsUniboxItems.put("title", new TableInfo.Column("title", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsUniboxItems.put("description", new TableInfo.Column("description", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
@@ -110,6 +110,25 @@ public final class UniBoxDatabase_Impl extends UniBoxDatabase {
         _columnsUniboxItems.put("longitude", new TableInfo.Column("longitude", "REAL", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsUniboxItems.put("locationLabel", new TableInfo.Column("locationLabel", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsUniboxItems.put("imageUri", new TableInfo.Column("imageUri", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("imageUrisJson", new TableInfo.Column("imageUrisJson", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("status", new TableInfo.Column("status", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("isFavorite", new TableInfo.Column("isFavorite", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("snoozedUntil", new TableInfo.Column("snoozedUntil", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("userNote", new TableInfo.Column("userNote", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("collectionName", new TableInfo.Column("collectionName", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("tagsJson", new TableInfo.Column("tagsJson", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("organizationReviewed", new TableInfo.Column("organizationReviewed", "INTEGER", true, 0, "0", TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("enrichmentStatus", new TableInfo.Column("enrichmentStatus", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("enrichmentProvider", new TableInfo.Column("enrichmentProvider", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("enrichmentError", new TableInfo.Column("enrichmentError", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("canonicalUrl", new TableInfo.Column("canonicalUrl", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("webSiteName", new TableInfo.Column("webSiteName", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("webAuthor", new TableInfo.Column("webAuthor", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("webPublishedAt", new TableInfo.Column("webPublishedAt", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("webLanguage", new TableInfo.Column("webLanguage", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("webReadingTimeMinutes", new TableInfo.Column("webReadingTimeMinutes", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("lastEnrichedAt", new TableInfo.Column("lastEnrichedAt", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsUniboxItems.put("updatedAt", new TableInfo.Column("updatedAt", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysUniboxItems = new HashSet<TableInfo.ForeignKey>(0);
         final HashSet<TableInfo.Index> _indicesUniboxItems = new HashSet<TableInfo.Index>(0);
         final TableInfo _infoUniboxItems = new TableInfo("unibox_items", _columnsUniboxItems, _foreignKeysUniboxItems, _indicesUniboxItems);
@@ -119,14 +138,17 @@ public final class UniBoxDatabase_Impl extends UniBoxDatabase {
                   + " Expected:\n" + _infoUniboxItems + "\n"
                   + " Found:\n" + _existingUniboxItems);
         }
-        final HashSet<String> _columnsUniboxItemsFts = new HashSet<String>(6);
+        final HashSet<String> _columnsUniboxItemsFts = new HashSet<String>(9);
         _columnsUniboxItemsFts.add("title");
         _columnsUniboxItemsFts.add("description");
         _columnsUniboxItemsFts.add("extractedText");
         _columnsUniboxItemsFts.add("url");
         _columnsUniboxItemsFts.add("sourceApp");
         _columnsUniboxItemsFts.add("category");
-        final FtsTableInfo _infoUniboxItemsFts = new FtsTableInfo("unibox_items_fts", _columnsUniboxItemsFts, "CREATE VIRTUAL TABLE IF NOT EXISTS `unibox_items_fts` USING FTS4(`title` TEXT NOT NULL, `description` TEXT NOT NULL, `extractedText` TEXT, `url` TEXT, `sourceApp` TEXT, `category` TEXT NOT NULL, content=`unibox_items`)");
+        _columnsUniboxItemsFts.add("userNote");
+        _columnsUniboxItemsFts.add("collectionName");
+        _columnsUniboxItemsFts.add("tagsJson");
+        final FtsTableInfo _infoUniboxItemsFts = new FtsTableInfo("unibox_items_fts", _columnsUniboxItemsFts, "CREATE VIRTUAL TABLE IF NOT EXISTS `unibox_items_fts` USING FTS4(`title` TEXT NOT NULL, `description` TEXT NOT NULL, `extractedText` TEXT, `url` TEXT, `sourceApp` TEXT, `category` TEXT NOT NULL, `userNote` TEXT NOT NULL, `collectionName` TEXT, `tagsJson` TEXT NOT NULL, content=`unibox_items`)");
         final FtsTableInfo _existingUniboxItemsFts = FtsTableInfo.read(db, "unibox_items_fts");
         if (!_infoUniboxItemsFts.equals(_existingUniboxItemsFts)) {
           return new RoomOpenHelper.ValidationResult(false, "unibox_items_fts(com.example.unibox.data.local.UniBoxItemFts).\n"
@@ -135,7 +157,7 @@ public final class UniBoxDatabase_Impl extends UniBoxDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "e191406186b589d2640b662f7efe6680", "35fa72381484924b9e4f937e1ac2e051");
+    }, "695e1040d8021b114b9ae903e5e6b89c", "5e12206b04a09977e22bbc42b2bca947");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

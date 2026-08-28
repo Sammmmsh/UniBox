@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">UniBox</string>
+    <string name="share_target_name">Save to UniBox</string>
     <style name="Theme.UniBox" parent="android:Theme.Material.Light.NoActionBar"/>
 </resources>

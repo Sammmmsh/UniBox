@@ -349,12 +349,13 @@ int string on 0x7f0c005d
 int string range_end 0x7f0c005e
 int string range_start 0x7f0c005f
 int string selected 0x7f0c0060
-int string status_bar_notification_info_overflow 0x7f0c0061
-int string switch_role 0x7f0c0062
-int string tab 0x7f0c0063
-int string template_percent 0x7f0c0064
-int string tooltip_description 0x7f0c0065
-int string tooltip_label 0x7f0c0066
+int string share_target_name 0x7f0c0061
+int string status_bar_notification_info_overflow 0x7f0c0062
+int string switch_role 0x7f0c0063
+int string tab 0x7f0c0064
+int string template_percent 0x7f0c0065
+int string tooltip_description 0x7f0c0066
+int string tooltip_label 0x7f0c0067
 int style DialogWindowTheme 0x7f0d0000
 int style FloatingDialogTheme 0x7f0d0001
 int style FloatingDialogWindowTheme 0x7f0d0002
@@ -488,3 +489,6 @@ int styleable StateListDrawable_android_enterFadeDuration 4
 int styleable StateListDrawable_android_exitFadeDuration 5
 int[] styleable StateListDrawableItem { 0x01010199 }
 int styleable StateListDrawableItem_android_drawable 0
+int xml backup_rules 0x7f0f0000
+int xml data_extraction_rules 0x7f0f0001
+int xml test_media_paths 0x7f0f0002

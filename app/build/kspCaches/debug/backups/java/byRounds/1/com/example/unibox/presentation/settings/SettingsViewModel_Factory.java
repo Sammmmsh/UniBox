@@ -1,8 +1,9 @@
 package com.example.unibox.presentation.settings;
 
-import android.content.Context;
+import com.example.unibox.data.export.LibraryExporter;
 import com.example.unibox.domain.repository.ThemePreferences;
 import com.example.unibox.domain.repository.UniBoxRepository;
+import com.example.unibox.domain.repository.WebPreviewPreferences;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
 import dagger.internal.QualifierMetadata;
@@ -11,7 +12,7 @@ import javax.annotation.processing.Generated;
 import javax.inject.Provider;
 
 @ScopeMetadata
-@QualifierMetadata("dagger.hilt.android.qualifiers.ApplicationContext")
+@QualifierMetadata
 @DaggerGenerated
 @Generated(
     value = "dagger.internal.codegen.ComponentProcessor",
@@ -27,29 +28,37 @@ import javax.inject.Provider;
 public final class SettingsViewModel_Factory implements Factory<SettingsViewModel> {
   private final Provider<UniBoxRepository> repositoryProvider;
 
-  private final Provider<Context> contextProvider;
+  private final Provider<LibraryExporter> libraryExporterProvider;
 
   private final Provider<ThemePreferences> themePreferencesProvider;
 
+  private final Provider<WebPreviewPreferences> webPreviewPreferencesProvider;
+
   public SettingsViewModel_Factory(Provider<UniBoxRepository> repositoryProvider,
-      Provider<Context> contextProvider, Provider<ThemePreferences> themePreferencesProvider) {
+      Provider<LibraryExporter> libraryExporterProvider,
+      Provider<ThemePreferences> themePreferencesProvider,
+      Provider<WebPreviewPreferences> webPreviewPreferencesProvider) {
     this.repositoryProvider = repositoryProvider;
-    this.contextProvider = contextProvider;
+    this.libraryExporterProvider = libraryExporterProvider;
     this.themePreferencesProvider = themePreferencesProvider;
+    this.webPreviewPreferencesProvider = webPreviewPreferencesProvider;
   }
 
   @Override
   public SettingsViewModel get() {
-    return newInstance(repositoryProvider.get(), contextProvider.get(), themePreferencesProvider.get());
+    return newInstance(repositoryProvider.get(), libraryExporterProvider.get(), themePreferencesProvider.get(), webPreviewPreferencesProvider.get());
   }
 
   public static SettingsViewModel_Factory create(Provider<UniBoxRepository> repositoryProvider,
-      Provider<Context> contextProvider, Provider<ThemePreferences> themePreferencesProvider) {
-    return new SettingsViewModel_Factory(repositoryProvider, contextProvider, themePreferencesProvider);
+      Provider<LibraryExporter> libraryExporterProvider,
+      Provider<ThemePreferences> themePreferencesProvider,
+      Provider<WebPreviewPreferences> webPreviewPreferencesProvider) {
+    return new SettingsViewModel_Factory(repositoryProvider, libraryExporterProvider, themePreferencesProvider, webPreviewPreferencesProvider);
   }
 
-  public static SettingsViewModel newInstance(UniBoxRepository repository, Context context,
-      ThemePreferences themePreferences) {
-    return new SettingsViewModel(repository, context, themePreferences);
+  public static SettingsViewModel newInstance(UniBoxRepository repository,
+      LibraryExporter libraryExporter, ThemePreferences themePreferences,
+      WebPreviewPreferences webPreviewPreferences) {
+    return new SettingsViewModel(repository, libraryExporter, themePreferences, webPreviewPreferences);
   }
 }

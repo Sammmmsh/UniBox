@@ -5,6 +5,8 @@ import dagger.internal.Factory;
 import dagger.internal.QualifierMetadata;
 import dagger.internal.ScopeMetadata;
 import javax.annotation.processing.Generated;
+import javax.inject.Provider;
+import okhttp3.OkHttpClient;
 
 @ScopeMetadata("javax.inject.Singleton")
 @QualifierMetadata
@@ -21,20 +23,28 @@ import javax.annotation.processing.Generated;
     "cast"
 })
 public final class OpenGraphParser_Factory implements Factory<OpenGraphParser> {
+  private final Provider<OkHttpClient> httpClientProvider;
+
+  private final Provider<PublicWebUrlValidator> urlValidatorProvider;
+
+  public OpenGraphParser_Factory(Provider<OkHttpClient> httpClientProvider,
+      Provider<PublicWebUrlValidator> urlValidatorProvider) {
+    this.httpClientProvider = httpClientProvider;
+    this.urlValidatorProvider = urlValidatorProvider;
+  }
+
   @Override
   public OpenGraphParser get() {
-    return newInstance();
+    return newInstance(httpClientProvider.get(), urlValidatorProvider.get());
   }
 
-  public static OpenGraphParser_Factory create() {
-    return InstanceHolder.INSTANCE;
+  public static OpenGraphParser_Factory create(Provider<OkHttpClient> httpClientProvider,
+      Provider<PublicWebUrlValidator> urlValidatorProvider) {
+    return new OpenGraphParser_Factory(httpClientProvider, urlValidatorProvider);
   }
 
-  public static OpenGraphParser newInstance() {
-    return new OpenGraphParser();
-  }
-
-  private static final class InstanceHolder {
-    private static final OpenGraphParser_Factory INSTANCE = new OpenGraphParser_Factory();
+  public static OpenGraphParser newInstance(OkHttpClient httpClient,
+      PublicWebUrlValidator urlValidator) {
+    return new OpenGraphParser(httpClient, urlValidator);
   }
 }
